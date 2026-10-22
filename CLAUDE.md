@@ -55,11 +55,20 @@ Trabajo final de la materia "Técnicas Avanzadas de Modelado IA" en la Maestría
 7. **Primera ejecución**:
    - Dependencias instaladas correctamente en entorno conda `futbol`.
    - YOLOv8n descargado (v8.4.0), dependencia `lap` auto-instalada.
-   - Pendiente: verificar que el video esté en `data/raw/video.mp4` y re-ejecutar.
+8. **Ejecución exitosa sobre video real** — resultados en `baseline_distances.csv`:
+   - ~460 track IDs generados (debería haber ~22 jugadores + árbitros).
+   - **Problema principal: fragmentación masiva de IDs** — BoT-SORT pierde y reasigna identidades constantemente.
+   - ~150 IDs con < 0.1 m (tracks fantasma de 1-2 frames).
+   - ~170 IDs entre 0.1–1.0 m (fragmentos muy cortos).
+   - ~90 IDs entre 1.0–5.0 m (fragmentos parciales).
+   - ~30 IDs entre 5.0–10.0 m (tracks más estables).
+   - ~10 IDs con > 10.0 m (mejores tracks; máximo: ID 824 con 15.38 m).
+   - **Interpretación**: la GMC funciona (valores no explotan), pero las distancias son muy bajas porque la distancia real de cada jugador está repartida entre múltiples IDs fragmentados. La Línea Base cumple su rol como punto de referencia.
 
 ### Fase 2 — Pendiente
+- Mejorar persistencia de IDs (reducir fragmentación del tracker).
 - Implementar filtro anti-jitter y deadband (suavizado de trayectorias).
-- Calibrar homografía real con puntos de la cancha del video.
+- Calibrar scale_factor con medidas reales de la cancha.
 - Implementar kinematics.py (velocidad, aceleración).
 - EDA de calidad de video (notebook 01).
 - Métricas de evaluación: comparar Fase 1 (cruda) vs Fase 2 (filtrada) (notebook 03).
