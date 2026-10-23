@@ -1,0 +1,58 @@
+{
+  "phase": "Exp 2: + Filtro Anti-Jitter",
+  "config": {
+    "exp_name": "Exp 2: + Filtro Anti-Jitter",
+    "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
+    "conf_thresh": 0.35,
+    "imgsz": 1280,
+    "smooth_window": 5,
+    "apply_kinematic_filter": true,
+    "deadband_ms": 0.4,
+    "max_speed_ms": 12.0,
+    "max_gap_frames": 5,
+    "scale_factor": 0.065,
+    "use_perspective_scale": false,
+    "save_video": false
+  },
+  "tracking": {
+    "n_unique_ids": 300,
+    "expected_players": 22,
+    "fragmentation_ratio": 13.6,
+    "id_switches_estimated": 278,
+    "n_ghost_tracks_by_dist": 80,
+    "pct_ghost_tracks_by_dist": 26.7,
+    "n_ghost_tracks_by_frames": 129,
+    "avg_track_length_frames": 27.7,
+    "median_track_length_frames": 7.0
+  },
+  "distances": {
+    "total_m": 1365.9,
+    "mean_per_id_m": 4.55,
+    "median_per_id_m": 1.1,
+    "max_m": 63.43,
+    "estimated_per_player_m": 62.1
+  },
+  "kinematics": {
+    "mean_speed_ms": 3.33,
+    "median_speed_ms": 2.43,
+    "max_speed_ms": 11.98,
+    "pct_impossible_speed": 0.0
+  },
+  "smoothness": {
+    "mean_accel_variance": 6.0377,
+    "raw_distance_m": 1365.9,
+    "filtered_distance_m": 1365.9,
+    "raw_filtered_ratio": 1.0,
+    "noise_pct": 0.0
+  },
+  "computational_cost": {
+    "seed": 42,
+    "total_time_s": 203.19,
+    "total_frames": 480,
+    "fps_processing": 2.36,
+    "avg_frame_ms": 417.65,
+    "peak_ram_mb": 25.6,
+    "peak_vram_mb": 0.0,
+    "video_fps": 15.970614070110996
+  }
+}

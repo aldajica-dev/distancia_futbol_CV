@@ -1,0 +1,216 @@
+{
+  "baseline": {
+    "phase": "baseline",
+    "tracking": {
+      "n_unique_ids": 470,
+      "expected_players": 22,
+      "fragmentation_ratio": 21.4,
+      "n_ghost_tracks_by_dist": 153,
+      "pct_ghost_tracks_by_dist": 32.6,
+      "id_switches_estimated": 448,
+      "n_ghost_tracks_by_frames": 326,
+      "avg_track_length_frames": 13.3,
+      "median_track_length_frames": 4.0
+    },
+    "distances": {
+      "total_m": 644.0,
+      "mean_per_id_m": 1.37,
+      "median_per_id_m": 0.36,
+      "max_m": 15.38,
+      "estimated_per_player_m": 29.3
+    },
+    "kinematics": {
+      "mean_speed_ms": 1.47,
+      "median_speed_ms": 0.44,
+      "max_speed_ms": 205.19,
+      "pct_impossible_speed": 1.1
+    },
+    "smoothness": {
+      "mean_accel_variance": 159.4108,
+      "raw_distance_m": 643.9,
+      "filtered_distance_m": 620.3,
+      "raw_filtered_ratio": 1.04,
+      "noise_pct": 3.7
+    },
+    "computational_cost": {
+      "total_time_s": 120.02,
+      "total_frames": 480,
+      "fps_processing": 4.0,
+      "avg_frame_ms": 243.48,
+      "peak_ram_mb": 83.8,
+      "peak_vram_mb": 0.0,
+      "video_fps": 15.970614070110996
+    }
+  },
+  "exp1": {
+    "phase": "Exp 1: BoT-SORT Tuneado",
+    "config": {
+      "exp_name": "Exp 1: BoT-SORT Tuneado",
+      "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
+      "conf_thresh": 0.35,
+      "imgsz": 1280,
+      "smooth_window": 1,
+      "apply_kinematic_filter": false,
+      "scale_factor": 0.065,
+      "use_perspective_scale": false,
+      "save_video": false
+    },
+    "tracking": {
+      "n_unique_ids": 300,
+      "expected_players": 22,
+      "fragmentation_ratio": 13.6,
+      "id_switches_estimated": 278,
+      "n_ghost_tracks_by_dist": 62,
+      "pct_ghost_tracks_by_dist": 20.7,
+      "n_ghost_tracks_by_frames": 129,
+      "avg_track_length_frames": 27.7,
+      "median_track_length_frames": 7.0
+    },
+    "distances": {
+      "total_m": 1872.3,
+      "mean_per_id_m": 6.24,
+      "median_per_id_m": 1.73,
+      "max_m": 49.89,
+      "estimated_per_player_m": 85.1
+    },
+    "kinematics": {
+      "mean_speed_ms": 1.15,
+      "median_speed_ms": 0.43,
+      "max_speed_ms": 24.36,
+      "pct_impossible_speed": 0.3
+    },
+    "smoothness": {
+      "mean_accel_variance": 11.2395,
+      "raw_distance_m": 1872.3,
+      "filtered_distance_m": 1838.4,
+      "raw_filtered_ratio": 1.02,
+      "noise_pct": 1.8
+    },
+    "computational_cost": {
+      "seed": 42,
+      "total_time_s": 215.67,
+      "total_frames": 480,
+      "fps_processing": 2.23,
+      "avg_frame_ms": 441.35,
+      "peak_ram_mb": 90.2,
+      "peak_vram_mb": 0.0,
+      "video_fps": 15.970614070110996
+    }
+  },
+  "exp2": {
+    "phase": "Exp 2: + Filtro Anti-Jitter",
+    "config": {
+      "exp_name": "Exp 2: + Filtro Anti-Jitter",
+      "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
+      "conf_thresh": 0.35,
+      "imgsz": 1280,
+      "smooth_window": 5,
+      "apply_kinematic_filter": true,
+      "deadband_ms": 0.4,
+      "max_speed_ms": 12.0,
+      "max_gap_frames": 5,
+      "scale_factor": 0.065,
+      "use_perspective_scale": false,
+      "save_video": false
+    },
+    "tracking": {
+      "n_unique_ids": 300,
+      "expected_players": 22,
+      "fragmentation_ratio": 13.6,
+      "id_switches_estimated": 278,
+      "n_ghost_tracks_by_dist": 80,
+      "pct_ghost_tracks_by_dist": 26.7,
+      "n_ghost_tracks_by_frames": 129,
+      "avg_track_length_frames": 27.7,
+      "median_track_length_frames": 7.0
+    },
+    "distances": {
+      "total_m": 1365.9,
+      "mean_per_id_m": 4.55,
+      "median_per_id_m": 1.1,
+      "max_m": 63.43,
+      "estimated_per_player_m": 62.1
+    },
+    "kinematics": {
+      "mean_speed_ms": 3.33,
+      "median_speed_ms": 2.43,
+      "max_speed_ms": 11.98,
+      "pct_impossible_speed": 0.0
+    },
+    "smoothness": {
+      "mean_accel_variance": 6.0377,
+      "raw_distance_m": 1365.9,
+      "filtered_distance_m": 1365.9,
+      "raw_filtered_ratio": 1.0,
+      "noise_pct": 0.0
+    },
+    "computational_cost": {
+      "seed": 42,
+      "total_time_s": 203.19,
+      "total_frames": 480,
+      "fps_processing": 2.36,
+      "avg_frame_ms": 417.65,
+      "peak_ram_mb": 25.6,
+      "peak_vram_mb": 0.0,
+      "video_fps": 15.970614070110996
+    }
+  },
+  "exp3": {
+    "phase": "Exp 3: Pipeline Avanzado Completo",
+    "config": {
+      "exp_name": "Exp 3: Pipeline Avanzado Completo",
+      "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
+      "conf_thresh": 0.35,
+      "imgsz": 1280,
+      "smooth_window": 5,
+      "apply_kinematic_filter": true,
+      "deadband_ms": 0.4,
+      "max_speed_ms": 12.0,
+      "max_gap_frames": 5,
+      "scale_factor": 0.04506355487908,
+      "use_perspective_scale": true,
+      "save_video": true
+    },
+    "tracking": {
+      "n_unique_ids": 300,
+      "expected_players": 22,
+      "fragmentation_ratio": 13.6,
+      "id_switches_estimated": 278,
+      "n_ghost_tracks_by_dist": 84,
+      "pct_ghost_tracks_by_dist": 28.0,
+      "n_ghost_tracks_by_frames": 129,
+      "avg_track_length_frames": 27.7,
+      "median_track_length_frames": 7.0
+    },
+    "distances": {
+      "total_m": 1270.5,
+      "mean_per_id_m": 4.24,
+      "median_per_id_m": 0.96,
+      "max_m": 57.64,
+      "estimated_per_player_m": 57.8
+    },
+    "kinematics": {
+      "mean_speed_ms": 3.14,
+      "median_speed_ms": 2.26,
+      "max_speed_ms": 11.98,
+      "pct_impossible_speed": 0.0
+    },
+    "smoothness": {
+      "mean_accel_variance": 4.9855,
+      "raw_distance_m": 1270.5,
+      "filtered_distance_m": 1270.5,
+      "raw_filtered_ratio": 1.0,
+      "noise_pct": 0.0
+    },
+    "computational_cost": {
+      "seed": 42,
+      "total_time_s": 205.58,
+      "total_frames": 480,
+      "fps_processing": 2.33,
+      "avg_frame_ms": 422.62,
+      "peak_ram_mb": 25.5,
+      "peak_vram_mb": 0.0,
+      "video_fps": 15.970614070110996
+    }
+  }
+}

@@ -33,9 +33,11 @@
   },
   "computational_cost": {
     "total_time_s": 120.02,
+    "total_frames": 480,
     "fps_processing": 4.0,
     "avg_frame_ms": 243.48,
     "peak_ram_mb": 83.8,
-    "peak_vram_mb": 0.0
+    "peak_vram_mb": 0.0,
+    "video_fps": 15.970614070110996
   }
 }

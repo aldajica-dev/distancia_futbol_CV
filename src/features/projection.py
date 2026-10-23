@@ -76,3 +76,44 @@ def pixels_to_meters(p1, p2, scale_factor=0.065):
     dx = p1[0] - p2[0]
     dy = p1[1] - p2[1]
     return np.sqrt(dx * dx + dy * dy) * scale_factor
+
+
+def calibrate_scale_factor(ref_points_px, real_distances_m):
+    """Calcula scale_factor calibrado a partir de referencias conocidas de la cancha.
+
+    Args:
+        ref_points_px: Lista de pares de puntos [((u1,v1),(u2,v2)), ...] medidos en píxeles.
+        real_distances_m: Lista de distancias reales en metros para cada par.
+
+    Returns:
+        scale_factor calibrado (metros/píxel).
+    """
+    scales = []
+    for (p1, p2), real_m in zip(ref_points_px, real_distances_m):
+        dx = p1[0] - p2[0]
+        dy = p1[1] - p2[1]
+        dist_px = np.sqrt(dx * dx + dy * dy)
+        if dist_px > 0:
+            scales.append(real_m / dist_px)
+    return float(np.mean(scales))
+
+
+def get_perspective_scale(foot_v, img_height, base_scale):
+    """Corrección de escala por perspectiva vertical.
+
+    Objetos más arriba en la imagen (lejos de la cámara) tienen mayor escala
+    porque cada píxel representa más metros.
+
+    Args:
+        foot_v: Coordenada vertical del pie del jugador.
+        img_height: Altura de la imagen en píxeles.
+        base_scale: Scale factor base calibrado.
+
+    Returns:
+        Scale factor ajustado por perspectiva.
+    """
+    # ratio 0→1 de arriba a abajo; arriba = lejos = mayor escala
+    t = 1.0 - (foot_v / img_height)
+    # factor de corrección lineal: hasta 1.5x en la parte superior
+    correction = 1.0 + 0.5 * t
+    return base_scale * correction
