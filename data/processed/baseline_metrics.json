@@ -32,10 +32,10 @@
     "noise_pct": 3.7
   },
   "computational_cost": {
-    "total_time_s": 124.32,
-    "fps_processing": 3.86,
-    "avg_frame_ms": 249.51,
-    "peak_ram_mb": 84.3,
+    "total_time_s": 120.02,
+    "fps_processing": 4.0,
+    "avg_frame_ms": 243.48,
+    "peak_ram_mb": 83.8,
     "peak_vram_mb": 0.0
   }
 }

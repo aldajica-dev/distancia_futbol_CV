@@ -3,6 +3,7 @@
 import csv
 import json
 import os
+import random
 import sys
 import time
 import tracemalloc
@@ -11,6 +12,8 @@ import cv2
 import numpy as np
 import psutil
 from ultralytics import YOLO
+
+SEED = 42
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from src.features.projection import estimate_camera_motion, compensate_point, pixels_to_meters
@@ -23,7 +26,23 @@ TIMING_OUTPUT = os.path.join(os.path.dirname(__file__), "..", "..", "data", "pro
 MODEL_PATH = "yolov8n.pt"
 
 
+def set_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    try:
+        import torch
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+            torch.backends.cudnn.deterministic = True
+            torch.backends.cudnn.benchmark = False
+    except ImportError:
+        pass
+
+
 def main():
+    set_seed(SEED)
+
     tracemalloc.start()
     process = psutil.Process()
 
@@ -127,6 +146,7 @@ def main():
             writer.writerow([row[0], row[1], f"{row[2]:.2f}", f"{row[3]:.2f}", f"{row[4]:.4f}"])
 
     timing = {
+        "seed": SEED,
         "total_time_s": round(total_time, 2),
         "total_frames": frame_num,
         "fps_processing": round(frame_num / total_time, 2) if total_time > 0 else 0,
