@@ -65,13 +65,25 @@ Trabajo final de la materia "Técnicas Avanzadas de Modelado IA" en la Maestría
    - ~10 IDs con > 10.0 m (mejores tracks; máximo: ID 824 con 15.38 m).
    - **Interpretación**: la GMC funciona (valores no explotan), pero las distancias son muy bajas porque la distancia real de cada jugador está repartida entre múltiples IDs fragmentados. La Línea Base cumple su rol como punto de referencia.
 
+### Métricas de evaluación (implementadas)
+- **`baseline_tracker.py`** actualizado: exporta `baseline_frame_data.csv` (datos por frame) y `baseline_timing.json` (costo computacional).
+- **`03_baseline_metrics.ipynb`** implementado con 7 secciones:
+  1. Calidad del tracking (IDs únicos, fragmentación, tracks fantasma, longitud de tracks).
+  2. ID switches estimados (nuevos IDs por segundo, acumulados vs esperados).
+  3. Plausibilidad cinemática (distribución de velocidades, % imposibles >12 m/s).
+  4. Distribución de distancias (histograma, top tracks, extrapolación a 90 min vs literatura 8–13 km).
+  5. Suavidad de trayectoria (varianza de aceleración, ratio cruda/filtrada con deadband).
+  6. Costo computacional (tiempo total, FPS, RAM, VRAM).
+  7. Tabla resumen + exportación a `baseline_metrics.json` (para comparar con Fase 2).
+- Dependencias agregadas: `matplotlib`, `pandas`, `psutil`.
+
 ### Fase 2 — Pendiente
 - Mejorar persistencia de IDs (reducir fragmentación del tracker).
 - Implementar filtro anti-jitter y deadband (suavizado de trayectorias).
 - Calibrar scale_factor con medidas reales de la cancha.
 - Implementar kinematics.py (velocidad, aceleración).
 - EDA de calidad de video (notebook 01).
-- Métricas de evaluación: comparar Fase 1 (cruda) vs Fase 2 (filtrada) (notebook 03).
+- Comparar Fase 1 vs Fase 2 usando `baseline_metrics.json` como referencia.
 - Visualización avanzada (annotator.py).
 
 ## Comandos útiles
@@ -93,6 +105,9 @@ jupyter notebook notebooks/
 ## Notas técnicas
 - El video de entrada debe estar en `data/raw/video.mp4` (configurable en baseline_tracker.py línea 15).
 - Video de salida: `data/processed/baseline_tactical.mp4`.
-- CSV de salida: `data/processed/baseline_distances.csv`.
+- CSV resumen: `data/processed/baseline_distances.csv`.
+- CSV por frame: `data/processed/baseline_frame_data.csv` (frame, track_id, foot_u, foot_v, dist_meters).
+- Timing: `data/processed/baseline_timing.json`.
+- Métricas: `data/processed/baseline_metrics.json` (generado por notebook 03).
 - El scale_factor por defecto es 0.065 (píxeles → metros). Ajustar según resolución y ángulo de la cámara.
 - La Línea Base usa suma cruda compensada por cámara, SIN filtros anti-jitter, para tener referencia de comparación con Fase 2.
