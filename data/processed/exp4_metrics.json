@@ -1,0 +1,97 @@
+{
+  "phase": "Exp 4: + Color Clustering + Track Merge",
+  "config": {
+    "exp_name": "Exp 4: + Color Clustering + Track Merge",
+    "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
+    "model_path": "yolov8s.pt",
+    "conf_thresh": 0.25,
+    "imgsz": 1280,
+    "smooth_window": 9,
+    "apply_kinematic_filter": true,
+    "deadband_ms": 1.0,
+    "max_speed_ms": 12.0,
+    "max_gap_frames": 9,
+    "scale_factor": 0.062109228362878,
+    "use_perspective_scale": true,
+    "field_polygon": [
+      [
+        60,
+        145
+      ],
+      [
+        1300,
+        145
+      ],
+      [
+        1364,
+        600
+      ],
+      [
+        1364,
+        764
+      ],
+      [
+        0,
+        764
+      ],
+      [
+        0,
+        600
+      ]
+    ],
+    "apply_color_clustering": true,
+    "apply_track_merge": true,
+    "merge_max_gap_frames": 112,
+    "merge_max_dist_px": 150.0,
+    "save_video": true
+  },
+  "tracking": {
+    "n_unique_ids": 32,
+    "expected_players": 22,
+    "fragmentation_ratio": 1.5,
+    "id_switches_estimated": 10,
+    "n_ghost_tracks_by_dist": 0,
+    "pct_ghost_tracks_by_dist": 0.0,
+    "n_ghost_tracks_by_frames": 0,
+    "avg_track_length_frames": 250.1,
+    "median_track_length_frames": 168.0
+  },
+  "distances": {
+    "total_m": 1096.0,
+    "mean_per_id_m": 34.25,
+    "median_per_id_m": 23.39,
+    "max_m": 143.32,
+    "estimated_per_player_m": 49.8
+  },
+  "kinematics": {
+    "mean_speed_ms": 6.41,
+    "median_speed_ms": 6.23,
+    "max_speed_ms": 11.99,
+    "pct_impossible_speed": 0.0
+  },
+  "smoothness": {
+    "mean_accel_variance": 3.1599,
+    "raw_distance_m": 1096.0,
+    "filtered_distance_m": 1096.0,
+    "raw_filtered_ratio": 1.0,
+    "noise_pct": 0.0
+  },
+  "computational_cost": {
+    "seed": 42,
+    "total_time_s": 1119.19,
+    "total_frames": 1233,
+    "fps_processing": 1.1,
+    "avg_frame_ms": 903.06,
+    "peak_ram_mb": 17.8,
+    "peak_vram_mb": 0.0,
+    "video_fps": 30.0
+  },
+  "merge_info": {
+    "n_teams_detected": 3,
+    "ids_before_merge": 44,
+    "ids_after_merge": 32,
+    "ids_reduced": 12,
+    "merge_max_gap_frames": 112,
+    "merge_max_dist_px": 150.0
+  }
+}

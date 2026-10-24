@@ -98,45 +98,29 @@ Trabajo final de la materia "Técnicas Avanzadas de Modelado IA" en la Maestría
 
 **Hiperparámetros BoT-SORT tuneados (finales):**
 - `track_high_thresh=0.40`, `track_low_thresh=0.10`, `new_track_thresh=0.58`
-- `track_buffer=120`, `match_thresh=0.80`, `conf_thresh=0.35`
+- `track_buffer=225` (ajustado a 30fps, ~7.5 seg), `match_thresh=0.80`, `conf_thresh=0.35`
 - `imgsz=1280` (resolución de inferencia YOLO aumentada)
 
-**Calibración del scale factor con referencias FIFA (resolución 1548x898):**
-- Ancho área penal: (324,430)→(1224,430) = 900 px → 40.32 m
-- Largo área penal: (540,280)→(540,645) = 365 px → 16.50 m
-- Diámetro círculo central: (572,350)→(977,350) = 405 px → 18.30 m
-- **Scale factor calibrado: 0.0451 m/px** (vs 0.065 de la Línea Base)
+**Calibración del scale factor con referencias FIFA (resolución 1364x764):**
+- Ancho área penal: (335,265)→(1020,265) = 685 px → 40.32 m
+- Largo área penal: (680,150)→(680,265) = 115 px → 16.50 m
+- Diámetro círculo central: (575,345)→(855,345) = 280 px → 18.30 m
+- **Scale factor calibrado: *(pendiente recálculo con nuevo video)*
 
-**Resultados del estudio de ablación:**
+**Parámetros temporales ajustados para 30fps (ratio 1.875x vs 16fps):**
+- `smooth_window`: 5 → 9 (~0.3 seg)
+- `max_gap_frames`: 5 → 9 (~0.3 seg)
+- `merge_max_gap_frames`: 60 → 112 (~3.75 seg)
 
-| Métrica | Baseline | Exp 1 | Exp 2 | Exp 3 |
-|---|---|---|---|---|
-| IDs únicos | 470 | 300 | 300 | 300 |
-| Fragmentación (x) | 21.4 | 13.6 | 13.6 | 13.6 |
-| Vel. máxima (m/s) | 205.19 | 24.36 | 11.98 | 11.98 |
-| % vel. imposible | 1.1% | 0.3% | 0.0% | 0.0% |
-| Var. aceleración | 159.41 | 11.24 | 6.04 | 4.99 |
-| % ruido (jitter) | 3.7% | 1.8% | 0.0% | 0.0% |
-| Dist/jugador (m) | 29.3 | 85.1 | 62.1 | 57.8 |
-| Extrap. 90 min (km) | 5.3 | 15.3 | 11.2 | **10.4** |
-| FPS procesamiento | 4.0 | 2.23 | 2.36 | 2.33 |
-
-**Mejoras logradas (Baseline → Exp 3):**
-- Fragmentación: ↓ 36.2% (470 → 300 IDs)
-- Velocidades imposibles: ↓ 100% (eliminadas)
-- Varianza de aceleración: ↓ 96.9%
-- Ruido (jitter): ↓ 100% (eliminado)
-- Extrapolación: 5.3 → 10.4 km/90min (dentro del rango FIFA 9-13 km)
+**Resultados del estudio de ablación:** *(re-ejecutando con nuevo video)*
 
 **Artefactos generados en `data/processed/`:**
-- `exp1_distances.csv`, `exp1_frame_data.csv`, `exp1_metrics.json`
-- `exp2_distances.csv`, `exp2_frame_data.csv`, `exp2_metrics.json`
-- `advanced_distances.csv`, `advanced_frame_data.csv`, `advanced_metrics.json`
+- `exp{1,2,3,4}_distances.csv`, `exp{1,2,3,4}_frame_data.csv`, `exp{1,2,3,4}_metrics.json`
 - `ablation_results.json` — Consolidado de todos los experimentos
-- `advanced_tactical.mp4` — Video anotado del pipeline avanzado (Exp 3)
+- `exp4_tactical.mp4` — Video anotado del pipeline avanzado (Exp 4)
 - `models/fine_tuned/botsort_tuned.yaml` — Configuración BoT-SORT tuneada
 
-**Reporte detallado:** `reports/reporte_fase2_ajustes.docx`
+**Documentación:** `reports/bitacora_fase2.md` (bitácora viva), `reports/reporte_fase2_ajustes.docx` (reporte final)
 
 ### Fase 2 — Etapa 2C: Evaluación y Reporte (pendiente)
 - Notebook de comparación con gráficas lado a lado.
@@ -171,7 +155,9 @@ jupyter notebook notebooks/
 - Timing: `data/processed/baseline_timing.json`.
 - Métricas baseline: `data/processed/baseline_metrics.json` (generado por notebook 03).
 - Métricas ablación: `data/processed/ablation_results.json` (generado por advanced_tracker.py).
+- Video actual: 1364x764 @ 30 FPS, 1233 frames (~41 seg).
+- Video anterior: 1548x898 @ 16 FPS, 480 frames (~30 seg).
 - Scale factor baseline: 0.065 m/px (estimación manual).
-- Scale factor calibrado (Fase 2): 0.0451 m/px (referencias FIFA sobre 1548x898).
+- Scale factor calibrado (Fase 2): recalculado por video (referencias FIFA sobre resolución actual).
 - Semilla de reproducibilidad: SEED=42 (random, numpy, torch, cudnn).
 - La Línea Base usa suma cruda compensada por cámara, SIN filtros anti-jitter, para tener referencia de comparación con Fase 2.

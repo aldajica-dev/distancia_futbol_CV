@@ -25,8 +25,8 @@ def _safe_get(d, *keys, default="N/A"):
 
 def print_comparison_table(results):
     """Imprime tabla comparativa de ablación en consola."""
-    keys = ["baseline", "exp1", "exp2", "exp3"]
-    labels = ["Baseline", "Exp 1", "Exp 2", "Exp 3"]
+    keys = ["baseline", "exp1", "exp2", "exp3", "exp4"]
+    labels = ["Baseline", "Exp 1", "Exp 2", "Exp 3", "Exp 4"]
     available = [(k, l) for k, l in zip(keys, labels) if k in results]
     keys = [a[0] for a in available]
     labels = [a[1] for a in available]
@@ -88,25 +88,30 @@ def main():
     # 1. Preparación de artefactos de configuración
     # =================================================================
 
-    # BoT-SORT tuneado para reducir fragmentación
+    # BoT-SORT tuneado para reducir fragmentación (ajustado para 30fps)
+    # new_track_thresh alto → más difícil iniciar tracks nuevos (reduce IDs falsos)
+    # match_thresh bajo → más fácil asociar detecciones a tracks existentes
+    # track_high_thresh=0.50 → no detectar espectadores/jueces en borde de cancha
     tuned_yaml = create_botsort_yaml(
         output_path=os.path.join(MODELS_DIR, "botsort_tuned.yaml"),
-        track_high_thresh=0.40,
+        track_high_thresh=0.50,
         track_low_thresh=0.10,
-        new_track_thresh=0.58,
-        track_buffer=120,
-        match_thresh=0.80,
+        new_track_thresh=0.70,
+        track_buffer=450,       # 15 seg a 30fps — más tiempo para re-asociar IDs perdidos
+        match_thresh=0.55,      # más fácil asociar a track existente (antes 0.70)
         gmc_method="sparseOptFlow",
+        with_reid=True,
+        appearance_thresh=0.25,  # ReID más permisivo (antes 0.35)
     )
     print(f"BoT-SORT tuneado generado: {tuned_yaml}")
 
-    # Calibrar scale_factor con referencias FIFA sobre resolución 1548x898
+    # Calibrar scale_factor usando solo medidas horizontales (resolución 1364x764)
+    # La medida vertical (profundidad área penal) se excluye: perspectiva la distorsiona
     ref_points_px = [
-        ((324, 430), (1224, 430)),  # ancho área penal: 40.32 m → ~900 px
-        ((540, 280), (540, 645)),   # largo área penal: 16.50 m → ~365 px
-        ((572, 350), (977, 350)),   # diámetro círculo central: 18.30 m → ~405 px
+        ((335, 265), (1020, 265)),  # ancho área penal: 40.32 m → 685 px (horizontal)
+        ((575, 345), (855, 345)),   # diámetro círculo central: 18.30 m → 280 px (horizontal)
     ]
-    real_distances_m = [40.32, 16.50, 18.30]
+    real_distances_m = [40.32, 18.30]
 
     calibrated_scale = calibrate_scale_factor(ref_points_px, real_distances_m)
     print(f"Scale factor calibrado: {calibrated_scale:.4f} m/px (baseline: 0.065)")
@@ -115,45 +120,76 @@ def main():
     # 2. Grilla de ablación (3 experimentos incrementales)
     # =================================================================
 
+    # Polígono de cancha (1364x764): excluye graderías superiores y bordes laterales
+    # Trapezoide que cubre solo el área visible de juego
+    field_polygon = [(60, 145), (1300, 145), (1364, 600), (1364, 764), (0, 764), (0, 600)]
+
     exp1_config = {
-        "exp_name": "Exp 1: BoT-SORT Tuneado",
+        "exp_name": "Exp 1: BoT-SORT Tuneado + ReID",
         "tracker_yaml": tuned_yaml,
-        "conf_thresh": 0.35,
+        "model_path": "yolov8s.pt",
+        "conf_thresh": 0.25,
         "imgsz": 1280,
         "smooth_window": 1,
         "apply_kinematic_filter": False,
         "scale_factor": 0.065,
         "use_perspective_scale": False,
+        "field_polygon": field_polygon,
         "save_video": False,
     }
 
     exp2_config = {
         "exp_name": "Exp 2: + Filtro Anti-Jitter",
         "tracker_yaml": tuned_yaml,
-        "conf_thresh": 0.35,
+        "model_path": "yolov8s.pt",
+        "conf_thresh": 0.25,
         "imgsz": 1280,
-        "smooth_window": 5,
+        "smooth_window": 9,
         "apply_kinematic_filter": True,
         "deadband_ms": 0.4,
         "max_speed_ms": 12.0,
-        "max_gap_frames": 5,
+        "max_gap_frames": 9,
         "scale_factor": 0.065,
         "use_perspective_scale": False,
+        "field_polygon": field_polygon,
         "save_video": False,
     }
 
     exp3_config = {
-        "exp_name": "Exp 3: Pipeline Avanzado Completo",
+        "exp_name": "Exp 3: + Scale Factor Calibrado",
         "tracker_yaml": tuned_yaml,
-        "conf_thresh": 0.35,
+        "model_path": "yolov8s.pt",
+        "conf_thresh": 0.25,
         "imgsz": 1280,
-        "smooth_window": 5,
+        "smooth_window": 9,
         "apply_kinematic_filter": True,
         "deadband_ms": 0.4,
         "max_speed_ms": 12.0,
-        "max_gap_frames": 5,
+        "max_gap_frames": 9,
         "scale_factor": calibrated_scale,
         "use_perspective_scale": True,
+        "field_polygon": field_polygon,
+        "save_video": False,
+    }
+
+    exp4_config = {
+        "exp_name": "Exp 4: + Color Clustering + Track Merge",
+        "tracker_yaml": tuned_yaml,
+        "model_path": "yolov8s.pt",
+        "conf_thresh": 0.25,
+        "imgsz": 1280,
+        "smooth_window": 9,
+        "apply_kinematic_filter": True,
+        "deadband_ms": 1.0,
+        "max_speed_ms": 12.0,
+        "max_gap_frames": 9,
+        "scale_factor": calibrated_scale,
+        "use_perspective_scale": True,
+        "field_polygon": field_polygon,
+        "apply_color_clustering": True,
+        "apply_track_merge": True,
+        "merge_max_gap_frames": 112,
+        "merge_max_dist_px": 150.0,
         "save_video": True,
     }
 
@@ -175,10 +211,15 @@ def main():
 
     results = {"baseline": baseline}
 
-    for prefix, config in [("exp1", exp1_config), ("exp2", exp2_config), ("advanced", exp3_config)]:
+    # Re-ejecutar todos los experimentos (configs actualizadas: ReID + polígono cancha + conf_thresh=0.35)
+    for prefix, config in [
+        ("exp1", exp1_config),
+        ("exp2", exp2_config),
+        ("exp3", exp3_config),
+        ("exp4", exp4_config),
+    ]:
         metrics = run_controlled_experiment(config, save_artifacts_prefix=prefix)
-        key = prefix if prefix != "advanced" else "exp3"
-        results[key] = metrics
+        results[prefix] = metrics
 
     # Consolidar resultados
     ablation_path = os.path.join(PROCESSED_DIR, "ablation_results.json")

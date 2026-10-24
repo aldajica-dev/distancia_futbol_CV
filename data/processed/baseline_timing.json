@@ -1,11 +1,11 @@
 {
   "seed": 42,
-  "total_time_s": 120.02,
-  "total_frames": 480,
-  "fps_processing": 4.0,
-  "avg_frame_ms": 243.48,
-  "peak_ram_mb": 83.8,
+  "total_time_s": 292.44,
+  "total_frames": 1233,
+  "fps_processing": 4.22,
+  "avg_frame_ms": 232.38,
+  "peak_ram_mb": 76.8,
   "peak_vram_mb": 0.0,
-  "video_fps": 15.970614070110996,
-  "video_resolution": "1548x898"
+  "video_fps": 30.0,
+  "video_resolution": "1364x764"
 }

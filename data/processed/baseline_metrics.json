@@ -1,43 +1,43 @@
 {
   "phase": "baseline",
   "tracking": {
-    "n_unique_ids": 470,
+    "n_unique_ids": 42,
     "expected_players": 22,
-    "fragmentation_ratio": 21.4,
-    "n_ghost_tracks_by_dist": 153,
-    "pct_ghost_tracks_by_dist": 32.6,
-    "id_switches_estimated": 448,
-    "n_ghost_tracks_by_frames": 326,
-    "avg_track_length_frames": 13.3,
-    "median_track_length_frames": 4.0
+    "fragmentation_ratio": 1.9,
+    "n_ghost_tracks_by_dist": 1,
+    "pct_ghost_tracks_by_dist": 2.4,
+    "id_switches_estimated": 20,
+    "n_ghost_tracks_by_frames": 5,
+    "avg_track_length_frames": 25.5,
+    "median_track_length_frames": 12.0
   },
   "distances": {
-    "total_m": 644.0,
-    "mean_per_id_m": 1.37,
-    "median_per_id_m": 0.36,
-    "max_m": 15.38,
-    "estimated_per_player_m": 29.3
+    "total_m": 75.7,
+    "mean_per_id_m": 1.8,
+    "median_per_id_m": 0.76,
+    "max_m": 15.36,
+    "estimated_per_player_m": 3.4
   },
   "kinematics": {
-    "mean_speed_ms": 1.47,
-    "median_speed_ms": 0.44,
-    "max_speed_ms": 205.19,
+    "mean_speed_ms": 2.21,
+    "median_speed_ms": 1.59,
+    "max_speed_ms": 44.5,
     "pct_impossible_speed": 1.1
   },
   "smoothness": {
-    "mean_accel_variance": 159.4108,
-    "raw_distance_m": 643.9,
-    "filtered_distance_m": 620.3,
-    "raw_filtered_ratio": 1.04,
-    "noise_pct": 3.7
+    "mean_accel_variance": 5.664,
+    "raw_distance_m": 75.7,
+    "filtered_distance_m": 75.4,
+    "raw_filtered_ratio": 1.0,
+    "noise_pct": 0.4
   },
   "computational_cost": {
-    "total_time_s": 120.02,
-    "total_frames": 480,
-    "fps_processing": 4.0,
-    "avg_frame_ms": 243.48,
-    "peak_ram_mb": 83.8,
+    "total_time_s": 292.44,
+    "total_frames": 1233,
+    "fps_processing": 4.22,
+    "avg_frame_ms": 232.38,
+    "peak_ram_mb": 76.8,
     "peak_vram_mb": 0.0,
-    "video_fps": 15.970614070110996
+    "video_fps": 30.0
   }
 }

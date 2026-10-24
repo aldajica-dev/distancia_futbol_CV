@@ -2,99 +2,126 @@
   "baseline": {
     "phase": "baseline",
     "tracking": {
-      "n_unique_ids": 470,
+      "n_unique_ids": 42,
       "expected_players": 22,
-      "fragmentation_ratio": 21.4,
-      "n_ghost_tracks_by_dist": 153,
-      "pct_ghost_tracks_by_dist": 32.6,
-      "id_switches_estimated": 448,
-      "n_ghost_tracks_by_frames": 326,
-      "avg_track_length_frames": 13.3,
-      "median_track_length_frames": 4.0
+      "fragmentation_ratio": 1.9,
+      "n_ghost_tracks_by_dist": 1,
+      "pct_ghost_tracks_by_dist": 2.4,
+      "id_switches_estimated": 20,
+      "n_ghost_tracks_by_frames": 5,
+      "avg_track_length_frames": 25.5,
+      "median_track_length_frames": 12.0
     },
     "distances": {
-      "total_m": 644.0,
-      "mean_per_id_m": 1.37,
-      "median_per_id_m": 0.36,
-      "max_m": 15.38,
-      "estimated_per_player_m": 29.3
+      "total_m": 75.7,
+      "mean_per_id_m": 1.8,
+      "median_per_id_m": 0.76,
+      "max_m": 15.36,
+      "estimated_per_player_m": 3.4
     },
     "kinematics": {
-      "mean_speed_ms": 1.47,
-      "median_speed_ms": 0.44,
-      "max_speed_ms": 205.19,
+      "mean_speed_ms": 2.21,
+      "median_speed_ms": 1.59,
+      "max_speed_ms": 44.5,
       "pct_impossible_speed": 1.1
     },
     "smoothness": {
-      "mean_accel_variance": 159.4108,
-      "raw_distance_m": 643.9,
-      "filtered_distance_m": 620.3,
-      "raw_filtered_ratio": 1.04,
-      "noise_pct": 3.7
+      "mean_accel_variance": 5.664,
+      "raw_distance_m": 75.7,
+      "filtered_distance_m": 75.4,
+      "raw_filtered_ratio": 1.0,
+      "noise_pct": 0.4
     },
     "computational_cost": {
-      "total_time_s": 120.02,
-      "total_frames": 480,
-      "fps_processing": 4.0,
-      "avg_frame_ms": 243.48,
-      "peak_ram_mb": 83.8,
+      "total_time_s": 292.44,
+      "total_frames": 1233,
+      "fps_processing": 4.22,
+      "avg_frame_ms": 232.38,
+      "peak_ram_mb": 76.8,
       "peak_vram_mb": 0.0,
-      "video_fps": 15.970614070110996
+      "video_fps": 30.0
     }
   },
   "exp1": {
-    "phase": "Exp 1: BoT-SORT Tuneado",
+    "phase": "Exp 1: BoT-SORT Tuneado + ReID",
     "config": {
-      "exp_name": "Exp 1: BoT-SORT Tuneado",
+      "exp_name": "Exp 1: BoT-SORT Tuneado + ReID",
       "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
-      "conf_thresh": 0.35,
+      "model_path": "yolov8s.pt",
+      "conf_thresh": 0.25,
       "imgsz": 1280,
       "smooth_window": 1,
       "apply_kinematic_filter": false,
       "scale_factor": 0.065,
       "use_perspective_scale": false,
+      "field_polygon": [
+        [
+          60,
+          145
+        ],
+        [
+          1300,
+          145
+        ],
+        [
+          1364,
+          600
+        ],
+        [
+          1364,
+          764
+        ],
+        [
+          0,
+          764
+        ],
+        [
+          0,
+          600
+        ]
+      ],
       "save_video": false
     },
     "tracking": {
-      "n_unique_ids": 300,
+      "n_unique_ids": 44,
       "expected_players": 22,
-      "fragmentation_ratio": 13.6,
-      "id_switches_estimated": 278,
-      "n_ghost_tracks_by_dist": 62,
-      "pct_ghost_tracks_by_dist": 20.7,
-      "n_ghost_tracks_by_frames": 129,
-      "avg_track_length_frames": 27.7,
-      "median_track_length_frames": 7.0
+      "fragmentation_ratio": 2.0,
+      "id_switches_estimated": 22,
+      "n_ghost_tracks_by_dist": 0,
+      "pct_ghost_tracks_by_dist": 0.0,
+      "n_ghost_tracks_by_frames": 0,
+      "avg_track_length_frames": 181.9,
+      "median_track_length_frames": 122.0
     },
     "distances": {
-      "total_m": 1872.3,
-      "mean_per_id_m": 6.24,
-      "median_per_id_m": 1.73,
-      "max_m": 49.89,
-      "estimated_per_player_m": 85.1
+      "total_m": 622.5,
+      "mean_per_id_m": 14.15,
+      "median_per_id_m": 7.05,
+      "max_m": 99.88,
+      "estimated_per_player_m": 28.3
     },
     "kinematics": {
-      "mean_speed_ms": 1.15,
-      "median_speed_ms": 0.43,
-      "max_speed_ms": 24.36,
-      "pct_impossible_speed": 0.3
+      "mean_speed_ms": 2.08,
+      "median_speed_ms": 1.6,
+      "max_speed_ms": 15.74,
+      "pct_impossible_speed": 0.1
     },
     "smoothness": {
-      "mean_accel_variance": 11.2395,
-      "raw_distance_m": 1872.3,
-      "filtered_distance_m": 1838.4,
-      "raw_filtered_ratio": 1.02,
-      "noise_pct": 1.8
+      "mean_accel_variance": 1.7571,
+      "raw_distance_m": 622.5,
+      "filtered_distance_m": 618.1,
+      "raw_filtered_ratio": 1.01,
+      "noise_pct": 0.7
     },
     "computational_cost": {
       "seed": 42,
-      "total_time_s": 215.67,
-      "total_frames": 480,
-      "fps_processing": 2.23,
-      "avg_frame_ms": 441.35,
-      "peak_ram_mb": 90.2,
+      "total_time_s": 1244.11,
+      "total_frames": 1233,
+      "fps_processing": 0.99,
+      "avg_frame_ms": 1002.28,
+      "peak_ram_mb": 85.1,
       "peak_vram_mb": 0.0,
-      "video_fps": 15.970614070110996
+      "video_fps": 30.0
     }
   },
   "exp2": {
@@ -102,115 +129,266 @@
     "config": {
       "exp_name": "Exp 2: + Filtro Anti-Jitter",
       "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
-      "conf_thresh": 0.35,
+      "model_path": "yolov8s.pt",
+      "conf_thresh": 0.25,
       "imgsz": 1280,
-      "smooth_window": 5,
+      "smooth_window": 9,
       "apply_kinematic_filter": true,
       "deadband_ms": 0.4,
       "max_speed_ms": 12.0,
-      "max_gap_frames": 5,
+      "max_gap_frames": 9,
       "scale_factor": 0.065,
       "use_perspective_scale": false,
+      "field_polygon": [
+        [
+          60,
+          145
+        ],
+        [
+          1300,
+          145
+        ],
+        [
+          1364,
+          600
+        ],
+        [
+          1364,
+          764
+        ],
+        [
+          0,
+          764
+        ],
+        [
+          0,
+          600
+        ]
+      ],
       "save_video": false
     },
     "tracking": {
-      "n_unique_ids": 300,
+      "n_unique_ids": 44,
       "expected_players": 22,
-      "fragmentation_ratio": 13.6,
-      "id_switches_estimated": 278,
-      "n_ghost_tracks_by_dist": 80,
-      "pct_ghost_tracks_by_dist": 26.7,
-      "n_ghost_tracks_by_frames": 129,
-      "avg_track_length_frames": 27.7,
-      "median_track_length_frames": 7.0
+      "fragmentation_ratio": 2.0,
+      "id_switches_estimated": 22,
+      "n_ghost_tracks_by_dist": 0,
+      "pct_ghost_tracks_by_dist": 0.0,
+      "n_ghost_tracks_by_frames": 0,
+      "avg_track_length_frames": 181.9,
+      "median_track_length_frames": 122.0
     },
     "distances": {
-      "total_m": 1365.9,
-      "mean_per_id_m": 4.55,
-      "median_per_id_m": 1.1,
-      "max_m": 63.43,
-      "estimated_per_player_m": 62.1
+      "total_m": 1194.3,
+      "mean_per_id_m": 27.14,
+      "median_per_id_m": 20.22,
+      "max_m": 114.77,
+      "estimated_per_player_m": 54.3
     },
     "kinematics": {
-      "mean_speed_ms": 3.33,
-      "median_speed_ms": 2.43,
-      "max_speed_ms": 11.98,
+      "mean_speed_ms": 5.98,
+      "median_speed_ms": 5.78,
+      "max_speed_ms": 12.0,
       "pct_impossible_speed": 0.0
     },
     "smoothness": {
-      "mean_accel_variance": 6.0377,
-      "raw_distance_m": 1365.9,
-      "filtered_distance_m": 1365.9,
+      "mean_accel_variance": 2.3743,
+      "raw_distance_m": 1194.3,
+      "filtered_distance_m": 1194.3,
       "raw_filtered_ratio": 1.0,
       "noise_pct": 0.0
     },
     "computational_cost": {
       "seed": 42,
-      "total_time_s": 203.19,
-      "total_frames": 480,
-      "fps_processing": 2.36,
-      "avg_frame_ms": 417.65,
-      "peak_ram_mb": 25.6,
+      "total_time_s": 1096.32,
+      "total_frames": 1233,
+      "fps_processing": 1.12,
+      "avg_frame_ms": 884.62,
+      "peak_ram_mb": 17.3,
       "peak_vram_mb": 0.0,
-      "video_fps": 15.970614070110996
+      "video_fps": 30.0
     }
   },
   "exp3": {
-    "phase": "Exp 3: Pipeline Avanzado Completo",
+    "phase": "Exp 3: + Scale Factor Calibrado",
     "config": {
-      "exp_name": "Exp 3: Pipeline Avanzado Completo",
+      "exp_name": "Exp 3: + Scale Factor Calibrado",
       "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
-      "conf_thresh": 0.35,
+      "model_path": "yolov8s.pt",
+      "conf_thresh": 0.25,
       "imgsz": 1280,
-      "smooth_window": 5,
+      "smooth_window": 9,
       "apply_kinematic_filter": true,
       "deadband_ms": 0.4,
       "max_speed_ms": 12.0,
-      "max_gap_frames": 5,
-      "scale_factor": 0.04506355487908,
+      "max_gap_frames": 9,
+      "scale_factor": 0.062109228362878,
       "use_perspective_scale": true,
-      "save_video": true
+      "field_polygon": [
+        [
+          60,
+          145
+        ],
+        [
+          1300,
+          145
+        ],
+        [
+          1364,
+          600
+        ],
+        [
+          1364,
+          764
+        ],
+        [
+          0,
+          764
+        ],
+        [
+          0,
+          600
+        ]
+      ],
+      "save_video": false
     },
     "tracking": {
-      "n_unique_ids": 300,
+      "n_unique_ids": 44,
       "expected_players": 22,
-      "fragmentation_ratio": 13.6,
-      "id_switches_estimated": 278,
-      "n_ghost_tracks_by_dist": 84,
-      "pct_ghost_tracks_by_dist": 28.0,
-      "n_ghost_tracks_by_frames": 129,
-      "avg_track_length_frames": 27.7,
-      "median_track_length_frames": 7.0
+      "fragmentation_ratio": 2.0,
+      "id_switches_estimated": 22,
+      "n_ghost_tracks_by_dist": 0,
+      "pct_ghost_tracks_by_dist": 0.0,
+      "n_ghost_tracks_by_frames": 0,
+      "avg_track_length_frames": 181.9,
+      "median_track_length_frames": 122.0
     },
     "distances": {
-      "total_m": 1270.5,
-      "mean_per_id_m": 4.24,
-      "median_per_id_m": 0.96,
-      "max_m": 57.64,
-      "estimated_per_player_m": 57.8
+      "total_m": 1099.9,
+      "mean_per_id_m": 25.0,
+      "median_per_id_m": 16.28,
+      "max_m": 102.53,
+      "estimated_per_player_m": 50.0
     },
     "kinematics": {
-      "mean_speed_ms": 3.14,
-      "median_speed_ms": 2.26,
-      "max_speed_ms": 11.98,
+      "mean_speed_ms": 6.26,
+      "median_speed_ms": 6.11,
+      "max_speed_ms": 11.99,
       "pct_impossible_speed": 0.0
     },
     "smoothness": {
-      "mean_accel_variance": 4.9855,
-      "raw_distance_m": 1270.5,
-      "filtered_distance_m": 1270.5,
+      "mean_accel_variance": 2.9641,
+      "raw_distance_m": 1099.9,
+      "filtered_distance_m": 1099.9,
       "raw_filtered_ratio": 1.0,
       "noise_pct": 0.0
     },
     "computational_cost": {
       "seed": 42,
-      "total_time_s": 205.58,
-      "total_frames": 480,
-      "fps_processing": 2.33,
-      "avg_frame_ms": 422.62,
-      "peak_ram_mb": 25.5,
+      "total_time_s": 1110.37,
+      "total_frames": 1233,
+      "fps_processing": 1.11,
+      "avg_frame_ms": 895.93,
+      "peak_ram_mb": 17.0,
       "peak_vram_mb": 0.0,
-      "video_fps": 15.970614070110996
+      "video_fps": 30.0
+    }
+  },
+  "exp4": {
+    "phase": "Exp 4: + Color Clustering + Track Merge",
+    "config": {
+      "exp_name": "Exp 4: + Color Clustering + Track Merge",
+      "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
+      "model_path": "yolov8s.pt",
+      "conf_thresh": 0.25,
+      "imgsz": 1280,
+      "smooth_window": 9,
+      "apply_kinematic_filter": true,
+      "deadband_ms": 1.0,
+      "max_speed_ms": 12.0,
+      "max_gap_frames": 9,
+      "scale_factor": 0.062109228362878,
+      "use_perspective_scale": true,
+      "field_polygon": [
+        [
+          60,
+          145
+        ],
+        [
+          1300,
+          145
+        ],
+        [
+          1364,
+          600
+        ],
+        [
+          1364,
+          764
+        ],
+        [
+          0,
+          764
+        ],
+        [
+          0,
+          600
+        ]
+      ],
+      "apply_color_clustering": true,
+      "apply_track_merge": true,
+      "merge_max_gap_frames": 112,
+      "merge_max_dist_px": 150.0,
+      "save_video": true
+    },
+    "tracking": {
+      "n_unique_ids": 32,
+      "expected_players": 22,
+      "fragmentation_ratio": 1.5,
+      "id_switches_estimated": 10,
+      "n_ghost_tracks_by_dist": 0,
+      "pct_ghost_tracks_by_dist": 0.0,
+      "n_ghost_tracks_by_frames": 0,
+      "avg_track_length_frames": 250.1,
+      "median_track_length_frames": 168.0
+    },
+    "distances": {
+      "total_m": 1096.0,
+      "mean_per_id_m": 34.25,
+      "median_per_id_m": 23.39,
+      "max_m": 143.32,
+      "estimated_per_player_m": 49.8
+    },
+    "kinematics": {
+      "mean_speed_ms": 6.41,
+      "median_speed_ms": 6.23,
+      "max_speed_ms": 11.99,
+      "pct_impossible_speed": 0.0
+    },
+    "smoothness": {
+      "mean_accel_variance": 3.1599,
+      "raw_distance_m": 1096.0,
+      "filtered_distance_m": 1096.0,
+      "raw_filtered_ratio": 1.0,
+      "noise_pct": 0.0
+    },
+    "computational_cost": {
+      "seed": 42,
+      "total_time_s": 1119.19,
+      "total_frames": 1233,
+      "fps_processing": 1.1,
+      "avg_frame_ms": 903.06,
+      "peak_ram_mb": 17.8,
+      "peak_vram_mb": 0.0,
+      "video_fps": 30.0
+    },
+    "merge_info": {
+      "n_teams_detected": 3,
+      "ids_before_merge": 44,
+      "ids_after_merge": 32,
+      "ids_reduced": 12,
+      "merge_max_gap_frames": 112,
+      "merge_max_dist_px": 150.0
     }
   }
 }

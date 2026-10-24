@@ -18,6 +18,8 @@ from src.features.projection import (
     estimate_camera_motion, compensate_point, pixels_to_meters, get_perspective_scale,
 )
 from src.features.kinematics import smooth_point, filter_step_distance
+from src.features.color_classifier import extract_torso_color, classify_teams
+from src.features.track_merger import build_track_segments, merge_tracks, apply_merge
 from src.models.detector import get_device
 
 SEED = 42
@@ -158,6 +160,12 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
     scale_factor = config.get("scale_factor", 0.065)
     use_perspective = config.get("use_perspective_scale", False)
     imgsz = config.get("imgsz", 640)
+    apply_color = config.get("apply_color_clustering", False)
+    apply_merge_tracks = config.get("apply_track_merge", False)
+    merge_max_gap = config.get("merge_max_gap_frames", 30)
+    merge_max_dist = config.get("merge_max_dist_px", 100.0)
+    field_polygon = config.get("field_polygon", None)
+    field_poly = np.array(field_polygon, dtype=np.float32).reshape((-1, 1, 2)) if field_polygon else None
 
     tracemalloc.start()
     try:
@@ -170,8 +178,9 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
 
     t_start = time.time()
 
+    model_path = config.get("model_path", MODEL_PATH)
     device = get_device()
-    model = YOLO(MODEL_PATH)
+    model = YOLO(model_path)
     cap = cv2.VideoCapture(VIDEO_INPUT)
     if not cap.isOpened():
         print(f"ERROR: No se pudo abrir el video en: {VIDEO_INPUT}")
@@ -199,6 +208,7 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
     track_positions = {}      # tid -> (foot_u, foot_v) última posición compensada
     track_last_frame = {}     # tid -> último frame donde fue detectado
     track_smooth_buffers = {} # tid -> buffer de posiciones para suavizado
+    track_colors = {}         # tid -> lista de (H, S, V) observaciones
     total_distances = {}
     frame_data = []
     frame_times = []
@@ -221,6 +231,15 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
                               tracker=tracker_yaml, imgsz=imgsz, verbose=False)
         boxes_xyxy = results[0].boxes.xyxy.cpu().numpy() if results[0].boxes.id is not None else np.empty((0, 4))
         ids = results[0].boxes.id.cpu().numpy().astype(int) if results[0].boxes.id is not None else np.empty(0, dtype=int)
+
+        # Polígono de cancha: excluir detecciones fuera del área de juego
+        if field_poly is not None and len(boxes_xyxy) > 0:
+            mask = np.array([
+                cv2.pointPolygonTest(field_poly, (float((b[0] + b[2]) / 2), float(b[3])), False) >= 0
+                for b in boxes_xyxy
+            ], dtype=bool)
+            boxes_xyxy = boxes_xyxy[mask]
+            ids = ids[mask]
 
         affine = estimate_camera_motion(prev_gray, curr_gray, boxes_xyxy) if prev_gray is not None else None
 
@@ -257,6 +276,11 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
             track_last_frame[tid] = frame_num
             frame_data.append((frame_num, tid, foot_u, foot_v, dist, frame_diff))
 
+            if apply_color:
+                color = extract_torso_color(frame, box)
+                if color is not None:
+                    track_colors.setdefault(tid, []).append(color)
+
             if save_video:
                 cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
                 label = f"ID:{tid} {total_distances.get(tid, 0.0):.1f}m"
@@ -281,10 +305,31 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
         import torch
         peak_vram_mb = torch.cuda.max_memory_allocated() / (1024 * 1024)
 
+    # Post-procesamiento: clasificación de equipos + fusión de tracks
+    merge_info = None
+    if apply_color and apply_merge_tracks and track_colors:
+        team_labels = classify_teams(track_colors, n_teams=3)
+        n_teams_found = len(set(v for v in team_labels.values() if v >= 0))
+        segments = build_track_segments(frame_data, total_distances, team_labels)
+        merge_map = merge_tracks(segments, max_gap_frames=merge_max_gap, max_dist_px=merge_max_dist)
+        total_distances, frame_data, n_before, n_after = apply_merge(total_distances, frame_data, merge_map)
+        merge_info = {
+            "n_teams_detected": n_teams_found,
+            "ids_before_merge": n_before,
+            "ids_after_merge": n_after,
+            "ids_reduced": n_before - n_after,
+            "merge_max_gap_frames": merge_max_gap,
+            "merge_max_dist_px": merge_max_dist,
+        }
+        print(f"  Color clustering: {n_teams_found} equipos detectados")
+        print(f"  Track merge: {n_before} → {n_after} IDs (fusionados {n_before - n_after})")
+
     metrics = _compute_metrics(
         total_distances, frame_data, frame_times, fps,
         total_time, peak_ram_mb, peak_vram_mb, frame_num, config,
     )
+    if merge_info:
+        metrics["merge_info"] = merge_info
 
     # Guardar artefactos
     if save_artifacts_prefix:

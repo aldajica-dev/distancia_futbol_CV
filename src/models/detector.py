@@ -24,7 +24,7 @@ def get_device():
 
 def create_botsort_yaml(output_path, track_high_thresh=0.3, track_low_thresh=0.05,
                         new_track_thresh=0.6, track_buffer=90, match_thresh=0.85,
-                        gmc_method="sparseOptFlow"):
+                        gmc_method="sparseOptFlow", with_reid=False, appearance_thresh=0.25):
     """Genera un archivo YAML de configuración de BoT-SORT para Ultralytics.
 
     Args:
@@ -35,6 +35,8 @@ def create_botsort_yaml(output_path, track_high_thresh=0.3, track_low_thresh=0.0
         track_buffer: Frames que un track perdido se mantiene vivo.
         match_thresh: Umbral de matching IoU/apariencia.
         gmc_method: Método de compensación de movimiento global.
+        with_reid: Activar ReID por apariencia para re-identificar jugadoras perdidas.
+        appearance_thresh: Umbral de distancia de apariencia para re-identificación.
 
     Returns:
         Ruta absoluta al archivo YAML generado.
@@ -49,8 +51,8 @@ def create_botsort_yaml(output_path, track_high_thresh=0.3, track_low_thresh=0.0
         "fuse_score": True,
         "gmc_method": gmc_method,
         "proximity_thresh": 0.5,
-        "appearance_thresh": 0.25,
-        "with_reid": False,
+        "appearance_thresh": appearance_thresh,
+        "with_reid": with_reid,
     }
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
