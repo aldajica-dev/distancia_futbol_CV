@@ -82,6 +82,7 @@ def create_bytetrack_yaml(output_path, track_high_thresh=0.25, track_low_thresh=
         "new_track_thresh": new_track_thresh,
         "track_buffer": track_buffer,
         "match_thresh": match_thresh,
+        "fuse_score": True,
     }
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
