@@ -117,15 +117,15 @@ def main():
     # =================================================================
 
     # Polígono de cancha (1364x764): excluye graderías superiores y bordes laterales
-    # Trapezoide que cubre solo el área visible de juego
-    field_polygon = [(60, 145), (1300, 145), (1364, 600), (1364, 764), (0, 764), (0, 600)]
+    # y=125 (antes 145) para capturar jugadoras de la línea del fondo
+    field_polygon = [(60, 125), (1300, 125), (1364, 600), (1364, 764), (0, 764), (0, 600)]
 
     exp1_config = {
         "exp_name": "Exp 1: ByteTrack Tuneado",
         "tracker_yaml": tuned_yaml,
         "model_path": "yolov8s.pt",
-        "conf_thresh": 0.10,   # = track_low_thresh: ByteTrack recibe detecciones débiles
-        "imgsz": 1280,
+        "conf_thresh": 0.10,
+        "imgsz": 1536,          # resolución mayor → mejor detección jugadoras lejanas
         "smooth_window": 1,
         "apply_kinematic_filter": False,
         "scale_factor": 0.065,
@@ -139,7 +139,7 @@ def main():
         "tracker_yaml": tuned_yaml,
         "model_path": "yolov8s.pt",
         "conf_thresh": 0.10,
-        "imgsz": 1280,
+        "imgsz": 1536,
         "smooth_window": 9,
         "apply_kinematic_filter": True,
         "deadband_ms": 0.4,
@@ -156,7 +156,7 @@ def main():
         "tracker_yaml": tuned_yaml,
         "model_path": "yolov8s.pt",
         "conf_thresh": 0.10,
-        "imgsz": 1280,
+        "imgsz": 1536,
         "smooth_window": 9,
         "apply_kinematic_filter": True,
         "deadband_ms": 0.4,
@@ -173,7 +173,7 @@ def main():
         "tracker_yaml": tuned_yaml,
         "model_path": "yolov8s.pt",
         "conf_thresh": 0.10,
-        "imgsz": 1280,
+        "imgsz": 1536,
         "smooth_window": 9,
         "apply_kinematic_filter": True,
         "deadband_ms": 1.0,
@@ -184,8 +184,8 @@ def main():
         "field_polygon": field_polygon,
         "apply_color_clustering": True,
         "apply_track_merge": True,
-        "merge_max_gap_frames": 112,
-        "merge_max_dist_px": 150.0,
+        "merge_max_gap_frames": 180,   # ~6 seg — fusiona fragmentos más distantes
+        "merge_max_dist_px": 200.0,    # mayor tolerancia espacial en el merge
         "save_video": True,
     }
 

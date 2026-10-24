@@ -330,4 +330,58 @@
 - track_high_thresh=0.25, track_low_thresh=0.10, new_track_thresh=0.60
 - track_buffer=450, match_thresh=0.80
 
+**Resultados — ejecutado en Google Colab GPU (T4):**
+
+| Métrica | Baseline | Exp 1 | Exp 2 | Exp 3 | Exp 4 |
+|---|---|---|---|---|---|
+| IDs únicos | 42 | 91 | 91 | 91 | 51 |
+| Fragmentación (x) | 1.9 | 4.1 | 4.1 | 4.1 | 2.3 |
+| ID switches est. | 20 | 69 | 69 | 69 | 29 |
+| Long. media track (fr) | 25.5 | 171.6 | 171.6 | 171.6 | 306.2 |
+| Ghost tracks | 5 | 3 | 3 | 3 | 0 |
+| Vel. máxima (m/s) | 44.5 | 16.7 | 12.0 | 12.0 | 12.0 |
+| % vel. imposible | 1.1% | 0.2% | 0.0% | 0.0% | 0.0% |
+| Var. aceleración | 5.66 | 2.59 | 2.48 | 3.06 | 2.68 |
+| % ruido (jitter) | 0.4% | 0.6% | 0.0% | 0.0% | 0.0% |
+| Dist/jugador (m) | 3.4 | 55.2 | 103.3 | 96.4 | 96.0 |
+| Extrap. 90 min (km) | 0.4 | 7.2 | 13.5 | 12.6 | **12.6** |
+| FPS procesamiento | 4.2 | 14.3 | 18.4 | 18.6 | 14.7 |
+
+**⚡ Hito alcanzado: Exp 4 extrapola 12.6 km/90min — dentro del rango FIFA (9-13 km)**
+
+**Comparativa ByteTrack (v6) vs BoT-SORT (v5) en Exp 4:**
+| Métrica | BoT-SORT v5 | ByteTrack v6 | Δ |
+|---|---|---|---|
+| IDs únicos | 33 | 51 | ↑55% (más detecciones conf=0.10) |
+| Track length | 237.2 fr | 306.2 fr | ↑29% |
+| Dist/jugador | 49.2 m | 96.0 m | ↑95% |
+| Extrap. 90min | 6.5 km | **12.6 km** | ↑94% |
+| Var. aceleración | 3.35 | 2.68 | ↓20% |
+| FPS GPU | 13.2 | 14.7 | ↑11% |
+
+**Por qué ByteTrack captura casi el doble de distancia:**
+- conf=0.10 detecta jugadoras parcialmente ocluidas o lejanas que BoT-SORT descartaba
+- La segunda pasada de asociación recupera tracks que se perdían brevemente → tracks más continuos
+- 306 frames de track medio vs 237 = menos fragmentación de distancia entre IDs
+
+**Trade-off:** más IDs (91 antes del merge, 51 después) porque conf=0.10 también detecta oficiales/personas en borde de cancha que el polígono no descarta completamente.
+
+**Nota v5 CPU (BoT-SORT+buffer=450):** resultados idénticos a v4 GPU. Los ajustes de hiperparámetros habían llegado al límite — la ganancia real vino de cambiar la arquitectura del tracker.
+
+**Artefactos:** `exp4_tactical.mp4` generado en Drive con ByteTrack.
+
+---
+
+## Corrida v7: imgsz=1536 + polígono y=125 + merge agresivo (2026-10-24)
+
+**Problemas a resolver:**
+1. Jugadoras del fondo (línea opuesta) no detectadas o poco visibles
+2. IDs aún saltan en algunos casos
+
+**Cambios:**
+- `imgsz: 1280 → 1536` — mayor resolución de inferencia, YOLO detecta objetos más pequeños (~16px vs ~20px mínimo)
+- `field_polygon y: 145 → 125` — el borde superior baja 20px para incluir jugadoras de la línea del fondo
+- `merge_max_gap_frames: 112 → 180` (~6 seg — fusiona fragmentos más separados temporalmente)
+- `merge_max_dist_px: 150 → 200` (mayor tolerancia espacial para fusionar tracks)
+
 **Resultados:** *(pendiente — ejecutar en Colab)*
