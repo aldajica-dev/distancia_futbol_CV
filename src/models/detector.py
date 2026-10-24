@@ -1,4 +1,4 @@
-"""Configuración de dispositivo y generación de archivos YAML para BoT-SORT."""
+"""Configuración de dispositivo y generación de archivos YAML para trackers."""
 
 import os
 
@@ -53,6 +53,35 @@ def create_botsort_yaml(output_path, track_high_thresh=0.3, track_low_thresh=0.0
         "proximity_thresh": 0.5,
         "appearance_thresh": appearance_thresh,
         "with_reid": with_reid,
+    }
+
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w") as f:
+        yaml.dump(config, f, default_flow_style=False, sort_keys=False)
+
+    return os.path.abspath(output_path)
+
+
+def create_bytetrack_yaml(output_path, track_high_thresh=0.25, track_low_thresh=0.10,
+                          new_track_thresh=0.60, track_buffer=450, match_thresh=0.80):
+    """Genera YAML de ByteTrack para Ultralytics.
+
+    ByteTrack hace dos pasadas de asociación:
+      1ª pasada: detecciones con conf > track_high_thresh → tracks activos
+      2ª pasada: detecciones con track_low_thresh < conf < track_high_thresh → recupera tracks perdidos
+
+    Para que la 2ª pasada funcione, conf_thresh en model.track() debe ser igual a track_low_thresh.
+
+    Returns:
+        Ruta absoluta al archivo YAML generado.
+    """
+    config = {
+        "tracker_type": "bytetrack",
+        "track_high_thresh": track_high_thresh,
+        "track_low_thresh": track_low_thresh,
+        "new_track_thresh": new_track_thresh,
+        "track_buffer": track_buffer,
+        "match_thresh": match_thresh,
     }
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

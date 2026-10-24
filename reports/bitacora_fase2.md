@@ -275,4 +275,59 @@
 - `match_thresh: 0.70 → 0.55` (más fácil asociar detección a track existente por IoU)
 - `appearance_thresh: 0.35 → 0.25` (ReID más permisivo — acepta mayor diferencia de apariencia para re-identificar)
 
-**Resultados:** *(pendiente — corrida en curso)*
+**Resultados — ejecutado en Google Colab GPU (T4):**
+
+| Métrica | Baseline | Exp 1 | Exp 2 | Exp 3 | Exp 4 |
+|---|---|---|---|---|---|
+| IDs únicos | 42 | 48 | 48 | 48 | 33 |
+| Fragmentación (x) | 1.9 | 2.2 | 2.2 | 2.2 | 1.5 |
+| ID switches est. | 20 | 26 | 26 | 26 | 11 |
+| Long. media track (fr) | 25.5 | 163.1 | 163.1 | 163.1 | 237.2 |
+| Ghost tracks | 5 | 0 | 0 | 0 | 0 |
+| Vel. máxima (m/s) | 44.5 | 15.7 | 12.0 | 12.0 | 12.0 |
+| % vel. imposible | 1.1% | 0.1% | 0.0% | 0.0% | 0.0% |
+| Var. aceleración | 5.66 | 1.75 | 2.41 | 3.02 | 3.35 |
+| % ruido (jitter) | 0.4% | 0.6% | 0.0% | 0.0% | 0.0% |
+| Dist/jugador (m) | 3.4 | 28.9 | 53.5 | 49.4 | 49.2 |
+| Extrap. 90 min (km) | 0.4 | 3.8 | 7.0 | 6.5 | 6.5 |
+| FPS procesamiento | 4.2 | 9.5 | 15.3 | 15.4 | 13.2 |
+| VRAM usada (MB) | 0 | 181 | 196 | 254 | 254 |
+
+**Mejoras acumuladas Baseline → Exp 4 (GPU Colab):**
+- IDs: 42 → 33 (↓21.4%)
+- Fragmentación: 1.9x → 1.5x
+- ID switches: 20 → 11 (↓45%)
+- Track length: 25.5 → 237.2 frames (↑830%)
+- Ghost tracks: 5 → 0 (↓100%)
+- Vel. imposibles: 1.1% → 0.0% (↓100%)
+- Jitter: 0.4% → 0.0% (↓100%)
+- Dist/jugador: 3.4 → 49.2 m (↑1347%)
+- Extrap. 90 min: 0.4 → 6.5 km (↑1525%)
+- FPS GPU: 4.2 (baseline CPU) → 13.2 (↑213%) — GPU ~13x más rápido que CPU local
+
+**GPU speedup:** 1.0 FPS (CPU local) → 9.5-15.4 FPS (Colab T4) — 9-15x más rápido
+
+**Distancia máxima individual:** 144.32 m (mejor track Exp 4) — jugadora rastreada casi todo el video
+
+---
+
+## Corrida v6: ByteTrack + conf_thresh=0.10 (2026-10-24)
+
+**Problema a resolver:** ID switching persiste y algunas jugadoras no se detectan con BoT-SORT.
+
+**Cambio fundamental — reemplazar BoT-SORT por ByteTrack:**
+- ByteTrack hace **dos pasadas de asociación**: primero usa detecciones de alta confianza (>0.25) para asociar tracks activos; luego usa detecciones de baja confianza (0.10-0.25) para recuperar tracks perdidos que no matchearon en la primera pasada.
+- Esto es especialmente útil cuando una jugadora queda ocluida brevemente — su detección baja a conf<0.25 pero ByteTrack la usa para mantener el ID.
+- **No usa ReID** (solo IoU/movimiento), lo que evita confusiones de apariencia entre jugadoras del mismo equipo.
+
+**Cambios:**
+- `detector.py`: nueva función `create_bytetrack_yaml()`
+- `advanced_tracker.py`: `create_botsort_yaml` → `create_bytetrack_yaml`, genera `bytetrack_tuned.yaml`
+- `conf_thresh: 0.25 → 0.10` en todos los experimentos (= track_low_thresh, necesario para que ByteTrack reciba las detecciones débiles)
+- Polígono de cancha mantiene activo para filtrar falsos positivos del bajo umbral
+
+**Parámetros ByteTrack:**
+- track_high_thresh=0.25, track_low_thresh=0.10, new_track_thresh=0.60
+- track_buffer=450, match_thresh=0.80
+
+**Resultados:** *(pendiente — ejecutar en Colab)*

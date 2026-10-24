@@ -6,7 +6,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from src.features.projection import calibrate_scale_factor
-from src.models.detector import create_botsort_yaml
+from src.models.detector import create_bytetrack_yaml
 from src.models.tracker import run_controlled_experiment
 
 PROCESSED_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "processed")
@@ -88,22 +88,18 @@ def main():
     # 1. Preparación de artefactos de configuración
     # =================================================================
 
-    # BoT-SORT tuneado para reducir fragmentación (ajustado para 30fps)
-    # new_track_thresh alto → más difícil iniciar tracks nuevos (reduce IDs falsos)
-    # match_thresh bajo → más fácil asociar detecciones a tracks existentes
-    # track_high_thresh=0.50 → no detectar espectadores/jueces en borde de cancha
-    tuned_yaml = create_botsort_yaml(
-        output_path=os.path.join(MODELS_DIR, "botsort_tuned.yaml"),
-        track_high_thresh=0.50,
-        track_low_thresh=0.10,
-        new_track_thresh=0.70,
-        track_buffer=450,       # 15 seg a 30fps — más tiempo para re-asociar IDs perdidos
-        match_thresh=0.55,      # más fácil asociar a track existente (antes 0.70)
-        gmc_method="sparseOptFlow",
-        with_reid=True,
-        appearance_thresh=0.25,  # ReID más permisivo (antes 0.35)
+    # ByteTrack: dos pasadas de asociación (alta+baja confianza) para recuperar IDs perdidos
+    # conf_thresh en los configs debe ser igual a track_low_thresh (0.10) para que
+    # ByteTrack reciba las detecciones débiles y las use en la 2ª pasada
+    tuned_yaml = create_bytetrack_yaml(
+        output_path=os.path.join(MODELS_DIR, "bytetrack_tuned.yaml"),
+        track_high_thresh=0.25,  # primera asociación: detecciones sólidas
+        track_low_thresh=0.10,   # segunda asociación: detecciones débiles (ocluidas)
+        new_track_thresh=0.60,   # umbral para crear track nuevo (evita falsos positivos)
+        track_buffer=450,        # 15 seg — mantiene IDs perdidos vivos más tiempo
+        match_thresh=0.80,       # IoU para matching
     )
-    print(f"BoT-SORT tuneado generado: {tuned_yaml}")
+    print(f"ByteTrack tuneado generado: {tuned_yaml}")
 
     # Calibrar scale_factor usando solo medidas horizontales (resolución 1364x764)
     # La medida vertical (profundidad área penal) se excluye: perspectiva la distorsiona
@@ -125,10 +121,10 @@ def main():
     field_polygon = [(60, 145), (1300, 145), (1364, 600), (1364, 764), (0, 764), (0, 600)]
 
     exp1_config = {
-        "exp_name": "Exp 1: BoT-SORT Tuneado + ReID",
+        "exp_name": "Exp 1: ByteTrack Tuneado",
         "tracker_yaml": tuned_yaml,
         "model_path": "yolov8s.pt",
-        "conf_thresh": 0.25,
+        "conf_thresh": 0.10,   # = track_low_thresh: ByteTrack recibe detecciones débiles
         "imgsz": 1280,
         "smooth_window": 1,
         "apply_kinematic_filter": False,
@@ -142,7 +138,7 @@ def main():
         "exp_name": "Exp 2: + Filtro Anti-Jitter",
         "tracker_yaml": tuned_yaml,
         "model_path": "yolov8s.pt",
-        "conf_thresh": 0.25,
+        "conf_thresh": 0.10,
         "imgsz": 1280,
         "smooth_window": 9,
         "apply_kinematic_filter": True,
@@ -159,7 +155,7 @@ def main():
         "exp_name": "Exp 3: + Scale Factor Calibrado",
         "tracker_yaml": tuned_yaml,
         "model_path": "yolov8s.pt",
-        "conf_thresh": 0.25,
+        "conf_thresh": 0.10,
         "imgsz": 1280,
         "smooth_window": 9,
         "apply_kinematic_filter": True,
@@ -176,7 +172,7 @@ def main():
         "exp_name": "Exp 4: + Color Clustering + Track Merge",
         "tracker_yaml": tuned_yaml,
         "model_path": "yolov8s.pt",
-        "conf_thresh": 0.25,
+        "conf_thresh": 0.10,
         "imgsz": 1280,
         "smooth_window": 9,
         "apply_kinematic_filter": True,
