@@ -4,7 +4,7 @@ import numpy as np
 
 
 def build_track_segments(frame_data, total_distances, team_labels):
-    """Construye segmentos de track con posición inicial/final y equipo.
+    """Construye segmentos de track con posición inicial/final, velocidad y equipo.
 
     Args:
         frame_data: Lista de tuplas (frame, tid, foot_u, foot_v, dist, frame_diff).
@@ -15,6 +15,9 @@ def build_track_segments(frame_data, total_distances, team_labels):
         Lista de dicts con info de cada segmento de track.
     """
     track_info = {}
+    # Para velocidad: guardamos las últimas N posiciones con sus frames
+    track_tail = {}
+
     for row in frame_data:
         frame, tid, foot_u, foot_v = row[0], row[1], row[2], row[3]
         if tid not in track_info:
@@ -26,14 +29,31 @@ def build_track_segments(frame_data, total_distances, team_labels):
                 "last_pos": (foot_u, foot_v),
                 "n_detections": 0,
             }
+            track_tail[tid] = []
         track_info[tid]["last_frame"] = frame
         track_info[tid]["last_pos"] = (foot_u, foot_v)
         track_info[tid]["n_detections"] += 1
+        track_tail[tid].append((frame, foot_u, foot_v))
+        if len(track_tail[tid]) > 10:
+            track_tail[tid].pop(0)
 
     segments = []
     for tid, info in track_info.items():
         info["distance"] = total_distances.get(tid, 0.0)
         info["team"] = team_labels.get(tid, -1)
+        # Velocidad media (px/frame) de las últimas observaciones del track
+        tail = track_tail[tid]
+        if len(tail) >= 2:
+            df = tail[-1][0] - tail[0][0]
+            if df > 0:
+                info["vel_u"] = (tail[-1][1] - tail[0][1]) / df
+                info["vel_v"] = (tail[-1][2] - tail[0][2]) / df
+            else:
+                info["vel_u"] = 0.0
+                info["vel_v"] = 0.0
+        else:
+            info["vel_u"] = 0.0
+            info["vel_v"] = 0.0
         segments.append(info)
 
     segments.sort(key=lambda s: s["first_frame"])
@@ -46,7 +66,8 @@ def merge_tracks(segments, max_gap_frames=30, max_dist_px=100.0):
     Reglas:
     - Solo fusiona tracks del MISMO equipo (team label).
     - El gap temporal entre el final de A y el inicio de B debe ser <= max_gap_frames.
-    - La distancia espacial entre la última posición de A y la primera de B <= max_dist_px.
+    - La distancia entre la posición PREDICHA de A (proyectada con su velocidad) y
+      la primera posición de B debe ser <= max_dist_px.
     - Greedy: una vez que B se fusiona con A, B no puede fusionarse con otro.
 
     Args:
@@ -61,8 +82,10 @@ def merge_tracks(segments, max_gap_frames=30, max_dist_px=100.0):
     for seg in segments:
         merge_map[seg["tid"]] = seg["tid"]
 
-    # Tracks ya absorbidos (no pueden ser raíz de otra fusión)
     absorbed = set()
+
+    # Índice por tid para acceder rápido a velocidad/posición actualizadas del grupo
+    seg_by_tid = {seg["tid"]: seg for seg in segments}
 
     for i, seg_a in enumerate(segments):
         if seg_a["tid"] in absorbed:
@@ -70,11 +93,11 @@ def merge_tracks(segments, max_gap_frames=30, max_dist_px=100.0):
         if seg_a["team"] == -1:
             continue
 
-        # Buscar candidatos que empiezan después de que seg_a termina
         root_tid = merge_map[seg_a["tid"]]
-        # Posición final actual del grupo fusionado (se actualiza al fusionar)
         current_last_frame = seg_a["last_frame"]
         current_last_pos = seg_a["last_pos"]
+        current_vel_u = seg_a.get("vel_u", 0.0)
+        current_vel_v = seg_a.get("vel_v", 0.0)
 
         for j in range(i + 1, len(segments)):
             seg_b = segments[j]
@@ -85,22 +108,25 @@ def merge_tracks(segments, max_gap_frames=30, max_dist_px=100.0):
 
             gap = seg_b["first_frame"] - current_last_frame
             if gap < 0 or gap > max_gap_frames:
-                if gap > max_gap_frames:
-                    continue
-                if gap < 0:
-                    continue
+                continue
 
-            dx = seg_b["first_pos"][0] - current_last_pos[0]
-            dy = seg_b["first_pos"][1] - current_last_pos[1]
+            # Proyectar la posición del grupo raíz 'gap' frames hacia adelante
+            predicted_u = current_last_pos[0] + current_vel_u * gap
+            predicted_v = current_last_pos[1] + current_vel_v * gap
+
+            dx = seg_b["first_pos"][0] - predicted_u
+            dy = seg_b["first_pos"][1] - predicted_v
             spatial_dist = np.sqrt(dx * dx + dy * dy)
             if spatial_dist > max_dist_px:
                 continue
 
-            # Fusionar B → A
+            # Fusionar B → raíz
             merge_map[seg_b["tid"]] = root_tid
             absorbed.add(seg_b["tid"])
             current_last_frame = seg_b["last_frame"]
             current_last_pos = seg_b["last_pos"]
+            current_vel_u = seg_b.get("vel_u", 0.0)
+            current_vel_v = seg_b.get("vel_v", 0.0)
 
     return merge_map
 

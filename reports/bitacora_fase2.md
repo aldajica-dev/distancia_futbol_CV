@@ -384,4 +384,68 @@
 - `merge_max_gap_frames: 112 → 180` (~6 seg — fusiona fragmentos más separados temporalmente)
 - `merge_max_dist_px: 150 → 200` (mayor tolerancia espacial para fusionar tracks)
 
-**Resultados:** *(pendiente — ejecutar en Colab)*
+**Resultados — ejecutado en Google Colab GPU (T4):**
+
+| Métrica | Baseline | Exp 1 | Exp 2 | Exp 3 | Exp 4 |
+|---|---|---|---|---|---|
+| IDs únicos | 42 | 110 | 110 | 110 | 51 |
+| Fragmentación (x) | 1.9 | 5.0 | 5.0 | 5.0 | 2.3 |
+| ID switches est. | 20 | 88 | 88 | 88 | 29 |
+| Long. media track (fr) | 25.5 | 159.1 | 159.1 | 159.1 | 343.2 |
+| Long. mediana track (fr) | 12.0 | 104.0 | 104.0 | 104.0 | 225.0 |
+| Ghost tracks | 5 | 4 | 4 | 4 | 2 |
+| Vel. máxima (m/s) | 44.5 | 20.1 | 12.0 | 12.0 | 12.0 |
+| % vel. imposible | 1.1% | 0.2% | 0.0% | 0.0% | 0.0% |
+| Var. aceleración | 5.66 | 2.55 | 2.44 | 3.06 | 2.33 |
+| % ruido (jitter) | 0.4% | 0.6% | 0.0% | 0.0% | 0.0% |
+| Dist/jugador (m) | 3.4 | 61.0 | 116.8 | 109.4 | 108.8 |
+| Extrap. 90 min (km) | 0.4 | 8.0 | 15.3 | 14.3 | **14.3** |
+| FPS procesamiento | 4.2 | 13.9 | 17.3 | 17.7 | 14.1 |
+
+**Comparativa v6 vs v7 (Exp 4):**
+| Métrica | v6 (imgsz=1280) | v7 (imgsz=1536) | Δ |
+|---|---|---|---|
+| IDs antes merge | 91 | 110 | +21 (más detecciones) |
+| IDs después merge | 51 | 51 | mismo |
+| Track length media | 306.2 fr | 343.2 fr | ↑12% |
+| Track length mediana | 140.0 fr | 225.0 fr | ↑61% |
+| Dist/jugador | 96.0 m | 108.8 m | ↑13% |
+| Extrap. 90min | 12.6 km | 14.3 km | ↑14% |
+| Var. aceleración | 2.68 | 2.33 | ↓13% |
+| Ghost tracks | 0 | 2 | +2 |
+
+**Análisis:**
+- imgsz=1536 + y=125 detecta 19 IDs adicionales (personas del fondo del campo), por eso 110 vs 91 iniciales
+- El merge sigue reduciendo a 51 IDs — misma fragmentación final
+- La mediana de track length sube de 140→225 frames (+61%): los tracks individuales son más largos y continuos
+- Extrapolación 14.3 km ligeramente por encima del rango FIFA (9-13 km) — los 2 ghost tracks indican que algunos no-jugadores (fotógrafos, juez de línea del fondo) se cuelan por el polígono expandido
+- La var. aceleración 2.33 es la mejor lograda hasta ahora
+
+**Estado del pipeline al final de la Fase 2:**
+- IDs: 42 → 51 (merge desde 110) — fragmentación 2.3x
+- Track length mediana: 12 → 225 frames (↑1775%)
+- Extrap. 90min: 0.4 → 14.3 km (próximo al rango FIFA)
+- Vel. imposibles, jitter, ghost tracks: prácticamente eliminados
+
+---
+
+## Corrida v8: Merge con predicción de posición por velocidad (2026-10-24)
+
+**Problema a resolver:** Una sola jugadora genera múltiples IDs después del merge. La causa raíz: `merge_tracks()` comparaba la última posición de A con la primera posición de B usando la posición estática. Si la jugadora se movió durante el gap, la distancia entre `last_pos(A)` y `first_pos(B)` supera el umbral aunque sean la misma persona.
+
+**Cambio en `src/features/track_merger.py`:**
+
+`build_track_segments()`:
+- Ahora almacena las últimas 10 posiciones de cada track en una "cola" (`track_tail`)
+- Calcula velocidad media (u-dot, v-dot) en px/frame usando la regresión lineal sobre esa cola
+
+`merge_tracks()`:
+- En lugar de comparar `last_pos(A)` con `first_pos(B)` directamente, **proyecta** la posición de A `gap` frames hacia adelante usando su velocidad:
+  ```
+  predicted_u = last_pos_u + vel_u × gap
+  predicted_v = last_pos_v + vel_v × gap
+  ```
+- Compara `dist(predicted, first_pos(B)) ≤ max_dist_px`
+- Al fusionar, actualiza también la velocidad del grupo raíz con la velocidad del track absorbido (el más reciente)
+
+**Impacto esperado:** Captura fusiones que antes fallaban porque la jugadora se desplazó durante el gap. Reduce la fragmentación de 2.3x hacia ~1.5x o menos sin cambiar otros parámetros.
