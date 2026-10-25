@@ -310,19 +310,34 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
     if apply_color and apply_merge_tracks and track_colors:
         team_labels = classify_teams(track_colors, n_teams=3)
         n_teams_found = len(set(v for v in team_labels.values() if v >= 0))
+
+        # Pasada 1
         segments = build_track_segments(frame_data, total_distances, team_labels)
-        merge_map = merge_tracks(segments, max_gap_frames=merge_max_gap, max_dist_px=merge_max_dist)
-        total_distances, frame_data, n_before, n_after = apply_merge(total_distances, frame_data, merge_map)
+        merge_map1 = merge_tracks(segments, max_gap_frames=merge_max_gap, max_dist_px=merge_max_dist)
+        total_distances, frame_data, n_before, n_after1 = apply_merge(total_distances, frame_data, merge_map1)
+
+        # Pasada 2: reconstruir segmentos sobre datos ya fusionados y fusionar de nuevo
+        merged_team_labels = {}
+        for orig_tid, root_tid in merge_map1.items():
+            orig_team = team_labels.get(orig_tid, -1)
+            if root_tid not in merged_team_labels or merged_team_labels[root_tid] == -1:
+                merged_team_labels[root_tid] = orig_team
+        segments2 = build_track_segments(frame_data, total_distances, merged_team_labels)
+        merge_map2 = merge_tracks(segments2, max_gap_frames=merge_max_gap, max_dist_px=merge_max_dist)
+        total_distances, frame_data, _, n_after2 = apply_merge(total_distances, frame_data, merge_map2)
+
+        n_after = n_after2
         merge_info = {
             "n_teams_detected": n_teams_found,
             "ids_before_merge": n_before,
+            "ids_after_pass1": n_after1,
             "ids_after_merge": n_after,
             "ids_reduced": n_before - n_after,
             "merge_max_gap_frames": merge_max_gap,
             "merge_max_dist_px": merge_max_dist,
         }
         print(f"  Color clustering: {n_teams_found} equipos detectados")
-        print(f"  Track merge: {n_before} → {n_after} IDs (fusionados {n_before - n_after})")
+        print(f"  Track merge: {n_before} → {n_after1} → {n_after} IDs (fusionados {n_before - n_after})")
 
     metrics = _compute_metrics(
         total_distances, frame_data, frame_times, fps,

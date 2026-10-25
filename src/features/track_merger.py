@@ -103,20 +103,28 @@ def merge_tracks(segments, max_gap_frames=30, max_dist_px=100.0):
             seg_b = segments[j]
             if seg_b["tid"] in absorbed:
                 continue
-            if seg_b["team"] != seg_a["team"]:
+            # Permitir merge: mismo equipo, o alguno sin clasificar (team=-1)
+            if seg_b["team"] != seg_a["team"] and seg_a["team"] != -1 and seg_b["team"] != -1:
                 continue
 
             gap = seg_b["first_frame"] - current_last_frame
             if gap < 0 or gap > max_gap_frames:
                 continue
 
-            # Proyectar la posición del grupo raíz 'gap' frames hacia adelante
+            # Distancia estática (fallback seguro)
+            dx_s = seg_b["first_pos"][0] - current_last_pos[0]
+            dy_s = seg_b["first_pos"][1] - current_last_pos[1]
+            static_dist = np.sqrt(dx_s * dx_s + dy_s * dy_s)
+
+            # Distancia con posición proyectada por velocidad
             predicted_u = current_last_pos[0] + current_vel_u * gap
             predicted_v = current_last_pos[1] + current_vel_v * gap
+            dx_p = seg_b["first_pos"][0] - predicted_u
+            dy_p = seg_b["first_pos"][1] - predicted_v
+            predicted_dist = np.sqrt(dx_p * dx_p + dy_p * dy_p)
 
-            dx = seg_b["first_pos"][0] - predicted_u
-            dy = seg_b["first_pos"][1] - predicted_v
-            spatial_dist = np.sqrt(dx * dx + dy * dy)
+            # Tomar la mejor de las dos (nunca peor que estático puro)
+            spatial_dist = min(static_dist, predicted_dist)
             if spatial_dist > max_dist_px:
                 continue
 

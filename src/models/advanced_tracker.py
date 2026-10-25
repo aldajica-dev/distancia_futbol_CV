@@ -184,8 +184,8 @@ def main():
         "field_polygon": field_polygon,
         "apply_color_clustering": True,
         "apply_track_merge": True,
-        "merge_max_gap_frames": 180,   # ~6 seg — fusiona fragmentos más distantes
-        "merge_max_dist_px": 200.0,    # mayor tolerancia espacial en el merge
+        "merge_max_gap_frames": 450,   # 15 seg (= track_buffer) — fusiona fragmentos lejanos
+        "merge_max_dist_px": 300.0,    # tolerancia espacial ampliada (+ predicción por velocidad)
         "save_video": True,
     }
 

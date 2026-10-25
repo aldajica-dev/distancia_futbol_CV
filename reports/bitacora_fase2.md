@@ -448,4 +448,22 @@
 - Compara `dist(predicted, first_pos(B)) ≤ max_dist_px`
 - Al fusionar, actualiza también la velocidad del grupo raíz con la velocidad del track absorbido (el más reciente)
 
-**Impacto esperado:** Captura fusiones que antes fallaban porque la jugadora se desplazó durante el gap. Reduce la fragmentación de 2.3x hacia ~1.5x o menos sin cambiar otros parámetros.
+**Resultados v8:** 110 → 51 IDs — idéntico a v7. La predicción de velocidad no tuvo efecto porque con `max_dist_px=200` y `max_gap=180` los pares válidos ya estaban dentro del umbral con la distancia estática, y los inválidos seguían siendo inválidos.
+
+**Causa raíz identificada:** los 59 tracks restantes (51-22=29 extra + ~20-22 no-jugadores) no se fusionan porque: (a) gap > 180 frames, (b) equipo mal clasificado (team=-1 bloquea merges válidos), (c) se necesitan dos pasadas para fusiones transitivas que la primera pasada pasa por alto.
+
+---
+
+## Corrida v9: merge 2 pasadas + min(estático,predicho) + parámetros amplios (2026-10-24)
+
+**Cambios en `src/features/track_merger.py`:**
+- Condición de equipo relajada: permite merge si alguno de los dos tracks tiene `team=-1` (no clasificado). Antes solo fusionaba mismo equipo.
+- Distancia usa `min(estático, predicho)`: se toma la mejor de las dos métricas → nunca peor que antes.
+
+**Cambios en `src/models/tracker.py`:**
+- **Segunda pasada de merge**: después del primer `apply_merge`, reconstruye segmentos sobre los datos ya fusionados y corre `merge_tracks` + `apply_merge` nuevamente. Esto captura fusiones transitivas que la primera pasada no pudo ver (A→B en pasada 1, B→C en pasada 2).
+- Log muestra 3 cifras: `110 → P1 → P2`.
+
+**Cambios en `src/models/advanced_tracker.py`:**
+- `merge_max_gap_frames: 180 → 450` (15 seg = full track_buffer)
+- `merge_max_dist_px: 200 → 300`
