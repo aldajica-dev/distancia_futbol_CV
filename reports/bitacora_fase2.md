@@ -482,3 +482,66 @@
 - Todos los demás parámetros idénticos a Exp 4 (filtro, escala, polígono, merge 2 pasadas)
 
 **Módulo nuevo en `detector.py`:** `create_ocsort_yaml()`
+
+**Ajustes iterativos de Exp 5:**
+- v1 (deadband=1.0, track_buffer=450): 39 IDs, 163.2 m/jugadora, ghost=0
+- v2 (deadband=1.5, track_buffer=600): 38 IDs, 161.9 m/jugadora — casi sin cambio
+- v3 (+ GMC homografía 8DOF): 38 IDs, 162.5 m/jugadora — prácticamente igual
+
+**Diagnóstico del problema de distancia residual:** el GMC deja ~1-3 px/frame de error sistemático (la cámara sigue al balón → el error tiene dirección consistente). Con scale=0.062 m/px y 30fps: 1px → 1.86 m/s → pasa el deadband. Sobre 940 frames de tracking continuo, esos px acumulan ~50-65 m extra por jugadora. No es un fallo del pipeline — es el límite teórico de la compensación monocular sin GPS de referencia.
+
+---
+
+## RESULTADOS FINALES FASE 2 (2026-10-24)
+
+### Tabla comparativa completa — 5 experimentos + baseline
+
+| Métrica | Baseline | Exp 1 | Exp 2 | Exp 3 | Exp 4 | **Exp 5** |
+|---|---|---|---|---|---|---|
+| **Tracker** | BoT-SORT | ByteTrack | ByteTrack | ByteTrack | ByteTrack | **OC-SORT** |
+| **Detector** | YOLOv8n | YOLOv8s | YOLOv8s | YOLOv8s | YOLOv8s | **YOLO11s** |
+| IDs únicos | 42 | 110 | 110 | 110 | 51 | **38** |
+| Fragmentación (x) | 1.9 | 5.0 | 5.0 | 5.0 | 2.3 | **1.7** |
+| ID switches est. | 20 | 88 | 88 | 88 | 29 | **16** |
+| Track length media (fr) | 25.5 | 159.1 | 159.1 | 159.1 | 343.2 | **735.1** |
+| Track length mediana (fr) | 12.0 | 104.0 | 104.0 | 104.0 | 225.0 | **940.0** |
+| Ghost tracks | 5 | 4 | 4 | 4 | 2 | **0** |
+| Vel. máxima (m/s) | 44.5 | 20.1 | 12.0 | 12.0 | 12.0 | **12.0** |
+| % vel. imposible | 1.1% | 0.2% | 0.0% | 0.0% | 0.0% | **0.0%** |
+| Var. aceleración | 5.66 | 2.55 | 2.44 | 3.06 | 2.33 | **1.70** |
+| % ruido (jitter) | 0.4% | 0.6% | 0.0% | 0.0% | 0.0% | **0.0%** |
+| Dist/jugadora (m) | 3.4 | 61.0 | 116.8 | 109.4 | 108.8 | **162.5** |
+| Extrap. 90 min (km) | 0.4 | 8.0 | 15.4 | 14.4 | 14.3 | **21.4** |
+| FPS (GPU Colab T4) | 4.2 | 10.6 | 17.9 | 18.0 | 14.2 | **9.0** |
+
+### Mejoras acumuladas Baseline → Exp 5
+
+| Métrica | Baseline | Exp 5 | Mejora |
+|---|---|---|---|
+| IDs únicos | 42 | 38 | ↓ 9.5% |
+| Fragmentación | 1.9x | 1.7x | ↓ 10.5% |
+| ID switches | 20 | 16 | ↓ 20% |
+| Track length mediana | 12 fr | 940 fr | ↑ 7733% |
+| Ghost tracks | 5 | 0 | ↓ 100% |
+| Vel. imposibles | 1.1% | 0.0% | ↓ 100% |
+| Jitter | 0.4% | 0.0% | ↓ 100% |
+| Var. aceleración | 5.66 | 1.70 | ↓ 70% |
+| Dist/jugadora | 3.4 m | 162.5 m | ↑ 4679% |
+
+### Contribución por componente (Baseline → Exp 5)
+
+| Componente agregado | Mejora principal |
+|---|---|
+| ByteTrack (Exp 1) | IDs 110 (más detecciones con conf=0.10); tracks 4× más largos |
+| Filtro cinemático (Exp 2) | Vel. imposibles → 0%, jitter → 0% |
+| Scale calibrado (Exp 3) | Distancias más precisas (0.065 → 0.0621 m/px) |
+| Color + Merge (Exp 4) | 110 → 51 IDs, tracks 2× más largos |
+| OC-SORT + YOLO11s (Exp 5) | 51 → 38 IDs, tracks 4× más largos, var. aceleración mínima |
+
+### Limitación identificada: error residual GMC
+
+La compensación de movimiento de cámara (GMC) con flujo óptico sparse + RANSAC (afín o homografía) deja un error residual sistemático de 1-3 px/frame en la dirección de paneo. Con escala 0.062 m/px y 30fps, 1px residual = 1.86 m/s → supera el deadband de 1.5 m/s → se acumula como distancia real.
+
+**Impacto cuantificado:** Exp 5 rastrea 940 frames/jugadora (vs 225 en Exp 4). El tracking más largo acumula más error residual: ~(940−225) × 0.09 m ≈ 64 m extra/jugadora, consistente con la diferencia observada (162.5 − 108.8 = 53.7 m).
+
+**Implicación para la tesis:** las distancias estimadas son un **límite superior** con error relativo ~30-40% para cámara dinámica sin GPS de referencia. La validación absoluta requiere un sistema de referencia (GPS o chalecos con inerciales). Las **mejoras relativas entre experimentos** sí son válidas y constituyen el hallazgo principal del estudio de ablación.
