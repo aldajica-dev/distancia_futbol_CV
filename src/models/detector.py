@@ -128,6 +128,7 @@ def create_deepocsort_yaml(output_path, track_high_thresh=0.25, track_low_thresh
         "delta_t": delta_t,
         "inertia": inertia,
         "use_byte": use_byte,
+        "with_reid": True,
         "model": reid_model,
         "proximity_thresh": proximity_thresh,
         "appearance_thresh": appearance_thresh,
