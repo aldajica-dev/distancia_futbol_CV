@@ -243,6 +243,7 @@ def main(only=None):
         "apply_track_merge": True,
         "merge_max_gap_frames": 450,
         "merge_max_dist_px": 300.0,
+        "use_homography_gmc": True,  # homografía 8DOF vs afín 4DOF — reduce error residual GMC
         "save_video": True,
     }
 

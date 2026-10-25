@@ -159,6 +159,7 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
     max_gap_frames = config.get("max_gap_frames", 5)
     scale_factor = config.get("scale_factor", 0.065)
     use_perspective = config.get("use_perspective_scale", False)
+    use_homography_gmc = config.get("use_homography_gmc", False)
     imgsz = config.get("imgsz", 640)
     apply_color = config.get("apply_color_clustering", False)
     apply_merge_tracks = config.get("apply_track_merge", False)
@@ -241,7 +242,7 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
             boxes_xyxy = boxes_xyxy[mask]
             ids = ids[mask]
 
-        affine = estimate_camera_motion(prev_gray, curr_gray, boxes_xyxy) if prev_gray is not None else None
+        affine = estimate_camera_motion(prev_gray, curr_gray, boxes_xyxy, use_homography=use_homography_gmc) if prev_gray is not None else None
 
         for box, tid in zip(boxes_xyxy, ids):
             x1, y1, x2, y2 = box
@@ -253,7 +254,7 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
             frame_diff = frame_num - track_last_frame.get(tid, frame_num)
 
             if affine is not None and tid in track_positions:
-                compensated = compensate_point(track_positions[tid], affine)
+                compensated = compensate_point(track_positions[tid], affine, use_homography=use_homography_gmc)
 
                 # Suavizado
                 buf = track_smooth_buffers.get(tid, [])

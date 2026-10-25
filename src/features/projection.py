@@ -4,10 +4,11 @@ import cv2
 import numpy as np
 
 AFFINE_IDENTITY = np.array([[1, 0, 0], [0, 1, 0]], dtype=np.float32)
+HOMOGRAPHY_IDENTITY = np.eye(3, dtype=np.float32)
 
 
-def estimate_camera_motion(prev_gray, curr_gray, boxes=None):
-    """Estima la transformación afín de la cámara entre dos frames consecutivos.
+def estimate_camera_motion(prev_gray, curr_gray, boxes=None, use_homography=False):
+    """Estima la transformación de cámara entre dos frames consecutivos.
 
     Usa flujo óptico sparse sobre puntos estáticos del fondo (excluye jugadores).
 
@@ -15,9 +16,13 @@ def estimate_camera_motion(prev_gray, curr_gray, boxes=None):
         prev_gray: Frame anterior en escala de grises.
         curr_gray: Frame actual en escala de grises.
         boxes: Lista de bounding boxes [[x1,y1,x2,y2], ...] para enmascarar jugadores.
+        use_homography: Si True, estima homografía completa 3x3 (8 DOF) en lugar de
+            la transformación afín 2x3 (4 DOF). La homografía modela mejor cámaras
+            con pan+tilt+zoom (perspectiva variable), reduciendo el error residual
+            que genera distancia fantasma en jugadores quietos.
 
     Returns:
-        Matriz afín 2x3 del movimiento de cámara.
+        Matriz 2x3 (afín) o 3x3 (homografía) del movimiento de cámara.
     """
     mask = np.ones_like(prev_gray) * 255
     if boxes is not None:
@@ -27,39 +32,48 @@ def estimate_camera_motion(prev_gray, curr_gray, boxes=None):
     pts = cv2.goodFeaturesToTrack(prev_gray, mask=mask, maxCorners=200,
                                   qualityLevel=0.01, minDistance=30)
     if pts is None or len(pts) < 4:
-        return AFFINE_IDENTITY.copy()
+        return HOMOGRAPHY_IDENTITY.copy() if use_homography else AFFINE_IDENTITY.copy()
 
     matched, status, _ = cv2.calcOpticalFlowPyrLK(prev_gray, curr_gray, pts, None)
     valid = status.ravel() == 1
     src = pts[valid]
     dst = matched[valid]
 
-    if len(src) < 4:
-        return AFFINE_IDENTITY.copy()
+    min_pts = 4
+    if len(src) < min_pts:
+        return HOMOGRAPHY_IDENTITY.copy() if use_homography else AFFINE_IDENTITY.copy()
 
-    affine, inliers = cv2.estimateAffinePartial2D(src, dst, method=cv2.RANSAC)
-    if affine is None:
-        return AFFINE_IDENTITY.copy()
+    if use_homography:
+        H, _ = cv2.findHomography(src, dst, method=cv2.RANSAC, ransacReprojThreshold=3.0)
+        if H is None:
+            return HOMOGRAPHY_IDENTITY.copy()
+        return H.astype(np.float32)
+    else:
+        affine, _ = cv2.estimateAffinePartial2D(src, dst, method=cv2.RANSAC)
+        if affine is None:
+            return AFFINE_IDENTITY.copy()
+        return affine.astype(np.float32)
 
-    return affine.astype(np.float32)
 
-
-def compensate_point(point, affine_matrix):
-    """Proyecta un punto del frame anterior al frame actual usando la matriz afín.
-
-    Cancela el movimiento de cámara: retorna dónde estaría el punto si el jugador
-    hubiera permanecido quieto.
+def compensate_point(point, matrix, use_homography=False):
+    """Proyecta un punto del frame anterior al frame actual cancelando el movimiento de cámara.
 
     Args:
         point: Tupla (u, v) del punto en el frame anterior.
-        affine_matrix: Matriz afín 2x3 del movimiento de cámara.
+        matrix: Matriz 2x3 (afín) o 3x3 (homografía) del movimiento de cámara.
+        use_homography: Debe coincidir con el flag usado en estimate_camera_motion.
 
     Returns:
         Tupla (u', v') compensada en el frame actual.
     """
-    pt = np.array([point[0], point[1], 1.0], dtype=np.float64)
-    result = affine_matrix @ pt
-    return float(result[0]), float(result[1])
+    if use_homography:
+        pt = np.array([[[point[0], point[1]]]], dtype=np.float32)
+        result = cv2.perspectiveTransform(pt, matrix)
+        return float(result[0][0][0]), float(result[0][0][1])
+    else:
+        pt = np.array([point[0], point[1], 1.0], dtype=np.float64)
+        result = matrix @ pt
+        return float(result[0]), float(result[1])
 
 
 def pixels_to_meters(p1, p2, scale_factor=0.065):
