@@ -6,7 +6,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 from src.features.projection import calibrate_scale_factor
-from src.models.detector import create_bytetrack_yaml
+from src.models.detector import create_bytetrack_yaml, create_ocsort_yaml
 from src.models.tracker import run_controlled_experiment
 
 PROCESSED_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data", "processed")
@@ -25,8 +25,8 @@ def _safe_get(d, *keys, default="N/A"):
 
 def print_comparison_table(results):
     """Imprime tabla comparativa de ablación en consola."""
-    keys = ["baseline", "exp1", "exp2", "exp3", "exp4"]
-    labels = ["Baseline", "Exp 1", "Exp 2", "Exp 3", "Exp 4"]
+    keys = ["baseline", "exp1", "exp2", "exp3", "exp4", "exp5"]
+    labels = ["Baseline", "Exp 1", "Exp 2", "Exp 3", "Exp 4", "Exp 5"]
     available = [(k, l) for k, l in zip(keys, labels) if k in results]
     keys = [a[0] for a in available]
     labels = [a[1] for a in available]
@@ -100,6 +100,19 @@ def main():
         match_thresh=0.80,       # IoU para matching
     )
     print(f"ByteTrack tuneado generado: {tuned_yaml}")
+
+    ocsort_yaml = create_ocsort_yaml(
+        output_path=os.path.join(MODELS_DIR, "ocsort_tuned.yaml"),
+        track_high_thresh=0.25,
+        track_low_thresh=0.10,
+        new_track_thresh=0.60,
+        track_buffer=450,
+        match_thresh=0.80,
+        delta_t=5,    # ventana de velocidad observada (~0.17 seg a 30fps)
+        inertia=0.3,  # más peso a velocidad observada que Kalman puro
+        use_byte=True,
+    )
+    print(f"OC-SORT tuneado generado: {ocsort_yaml}")
 
     # Calibrar scale_factor usando solo medidas horizontales (resolución 1364x764)
     # La medida vertical (profundidad área penal) se excluye: perspectiva la distorsiona
@@ -207,12 +220,34 @@ def main():
 
     results = {"baseline": baseline}
 
-    # Re-ejecutar todos los experimentos (configs actualizadas: ReID + polígono cancha + conf_thresh=0.35)
+    exp5_config = {
+        "exp_name": "Exp 5: OC-SORT + YOLO11s",
+        "tracker_yaml": ocsort_yaml,
+        "model_path": "yolo11s.pt",       # detector más moderno, mejor recall
+        "conf_thresh": 0.10,
+        "imgsz": 1536,
+        "smooth_window": 9,
+        "apply_kinematic_filter": True,
+        "deadband_ms": 1.0,
+        "max_speed_ms": 12.0,
+        "max_gap_frames": 9,
+        "scale_factor": calibrated_scale,
+        "use_perspective_scale": True,
+        "field_polygon": field_polygon,
+        "apply_color_clustering": True,
+        "apply_track_merge": True,
+        "merge_max_gap_frames": 450,
+        "merge_max_dist_px": 300.0,
+        "save_video": True,
+    }
+
+    # Re-ejecutar todos los experimentos
     for prefix, config in [
         ("exp1", exp1_config),
         ("exp2", exp2_config),
         ("exp3", exp3_config),
         ("exp4", exp4_config),
+        ("exp5", exp5_config),
     ]:
         metrics = run_controlled_experiment(config, save_artifacts_prefix=prefix)
         results[prefix] = metrics

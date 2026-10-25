@@ -467,3 +467,18 @@
 **Cambios en `src/models/advanced_tracker.py`:**
 - `merge_max_gap_frames: 180 → 450` (15 seg = full track_buffer)
 - `merge_max_dist_px: 200 → 300`
+
+---
+
+## Exp 5: OC-SORT + YOLO11s (corrida v9)
+
+**Motivación:** explorar arquitectura alternativa sobre la mejor configuración (Exp 4) para cuantificar si un tracker y detector más modernos reducen la fragmentación.
+
+**Cambios respecto a Exp 4:**
+- Tracker: `ByteTrack` → `OC-SORT` (`ocsort_tuned.yaml`)
+  - OC-SORT usa velocidad *observada* (últimas detecciones) en vez de pura predicción Kalman → más robusto cuando la jugadora reaparece en posición diferente a la predicha
+  - `delta_t=5` (ventana de velocidad ~0.17 seg), `inertia=0.3`, `use_byte=True`
+- Detector: `yolov8s.pt` → `yolo11s.pt` (YOLO11 Small — generación más reciente, mejor mAP por parámetro)
+- Todos los demás parámetros idénticos a Exp 4 (filtro, escala, polígono, merge 2 pasadas)
+
+**Módulo nuevo en `detector.py`:** `create_ocsort_yaml()`

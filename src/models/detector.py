@@ -62,6 +62,40 @@ def create_botsort_yaml(output_path, track_high_thresh=0.3, track_low_thresh=0.0
     return os.path.abspath(output_path)
 
 
+def create_ocsort_yaml(output_path, track_high_thresh=0.25, track_low_thresh=0.10,
+                       new_track_thresh=0.60, track_buffer=450, match_thresh=0.80,
+                       delta_t=5, inertia=0.3, use_byte=True):
+    """Genera YAML de OC-SORT para Ultralytics.
+
+    OC-SORT (Observation-Centric SORT) mantiene trayectorias con predicción
+    basada en velocidad observada, lo que lo hace más robusto ante oclusiones
+    que ByteTrack puro (menos drift cuando el jugador reaparece en posición
+    diferente a la predicha por Kalman).
+
+    Args:
+        delta_t: Ventana de frames para estimar velocidad observada (px/frame).
+        inertia: Peso de la velocidad observada vs. predicción Kalman (0=Kalman puro).
+        use_byte: Activar segunda pasada con detecciones de baja confianza (como ByteTrack).
+    """
+    config = {
+        "tracker_type": "ocsort",
+        "track_high_thresh": track_high_thresh,
+        "track_low_thresh": track_low_thresh,
+        "new_track_thresh": new_track_thresh,
+        "track_buffer": track_buffer,
+        "match_thresh": match_thresh,
+        "iou_type": "giou",
+        "asso_func": "giou",
+        "delta_t": delta_t,
+        "inertia": inertia,
+        "use_byte": use_byte,
+    }
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w") as f:
+        yaml.dump(config, f, default_flow_style=False, sort_keys=False)
+    return os.path.abspath(output_path)
+
+
 def create_bytetrack_yaml(output_path, track_high_thresh=0.25, track_low_thresh=0.10,
                           new_track_thresh=0.60, track_buffer=450, match_thresh=0.80):
     """Genera YAML de ByteTrack para Ultralytics.
