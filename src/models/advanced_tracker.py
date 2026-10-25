@@ -111,7 +111,7 @@ def main(only=None):
         track_high_thresh=0.25,
         track_low_thresh=0.10,
         new_track_thresh=0.60,
-        track_buffer=450,
+        track_buffer=600,  # 20 seg — reduce IDs nuevos cuando jugadora sale de cuadro
         match_thresh=0.80,
         delta_t=5,    # ventana de velocidad observada (~0.17 seg a 30fps)
         inertia=0.3,  # más peso a velocidad observada que Kalman puro
@@ -233,7 +233,7 @@ def main(only=None):
         "imgsz": 1536,
         "smooth_window": 9,
         "apply_kinematic_filter": True,
-        "deadband_ms": 1.0,
+        "deadband_ms": 1.5,    # 1.0→1.5: filtra residual GMC (~1.2 m/s) sin eliminar trote lento
         "max_speed_ms": 12.0,
         "max_gap_frames": 9,
         "scale_factor": calibrated_scale,
