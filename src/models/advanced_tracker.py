@@ -83,7 +83,12 @@ def print_comparison_table(results):
     print(sep)
 
 
-def main():
+def main(only=None):
+    """
+    Args:
+        only: lista de prefijos a ejecutar, p.ej. ["exp5"].
+              None = ejecutar todos.
+    """
     # =================================================================
     # 1. Preparación de artefactos de configuración
     # =================================================================
@@ -241,14 +246,32 @@ def main():
         "save_video": True,
     }
 
-    # Re-ejecutar todos los experimentos
-    for prefix, config in [
+    all_experiments = [
         ("exp1", exp1_config),
         ("exp2", exp2_config),
         ("exp3", exp3_config),
         ("exp4", exp4_config),
         ("exp5", exp5_config),
-    ]:
+    ]
+
+    # Filtrar experimentos si se especificó --only / only=
+    if only:
+        run_set = set(only)
+        experiments_to_run = [(p, c) for p, c in all_experiments if p in run_set]
+        # Cargar resultados previos de los que se omiten
+        for prefix, _ in all_experiments:
+            if prefix not in run_set:
+                cached = os.path.join(PROCESSED_DIR, f"{prefix}_metrics.json")
+                if os.path.exists(cached):
+                    with open(cached) as f:
+                        results[prefix] = json.load(f)
+                    print(f"[{prefix}] cargado de caché: {cached}")
+                else:
+                    print(f"[{prefix}] sin caché — omitido de la tabla")
+    else:
+        experiments_to_run = all_experiments
+
+    for prefix, config in experiments_to_run:
         metrics = run_controlled_experiment(config, save_artifacts_prefix=prefix)
         results[prefix] = metrics
 
@@ -266,4 +289,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--only", nargs="+", metavar="EXP",
+        help="Prefijos a ejecutar, p.ej. --only exp5  o  --only exp4 exp5"
+    )
+    args = parser.parse_args()
+    main(only=args.only)
