@@ -1,0 +1,101 @@
+{
+  "phase": "Exp 6: BoT-SORT + YOLO11s + ReID (OSNet)",
+  "config": {
+    "exp_name": "Exp 6: BoT-SORT + YOLO11s + ReID (OSNet)",
+    "tracker_yaml": "/content/distancia_futbol_CV/models/fine_tuned/botsort_reid.yaml",
+    "model_path": "yolo11s.pt",
+    "conf_thresh": 0.1,
+    "imgsz": 1536,
+    "smooth_window": 9,
+    "apply_kinematic_filter": true,
+    "deadband_ms": 1.5,
+    "max_speed_ms": 12.0,
+    "max_gap_frames": 9,
+    "scale_factor": 0.062109228362878,
+    "use_perspective_scale": true,
+    "field_polygon": [
+      [
+        60,
+        125
+      ],
+      [
+        1300,
+        125
+      ],
+      [
+        1364,
+        600
+      ],
+      [
+        1364,
+        764
+      ],
+      [
+        0,
+        764
+      ],
+      [
+        0,
+        600
+      ]
+    ],
+    "apply_color_clustering": true,
+    "apply_track_merge": true,
+    "merge_max_gap_frames": 450,
+    "merge_max_dist_px": 300.0,
+    "use_homography_gmc": true,
+    "video_path": "/content/drive/MyDrive/futbol_cv/video.mp4",
+    "output_dir": "/content/drive/MyDrive/futbol_cv/resultados",
+    "save_video": true
+  },
+  "tracking": {
+    "n_unique_ids": 37,
+    "expected_players": 22,
+    "fragmentation_ratio": 1.7,
+    "id_switches_estimated": 15,
+    "n_ghost_tracks_by_dist": 0,
+    "pct_ghost_tracks_by_dist": 0.0,
+    "n_ghost_tracks_by_frames": 0,
+    "avg_track_length_frames": 779.4,
+    "median_track_length_frames": 1030.0
+  },
+  "distances": {
+    "total_m": 3634.3,
+    "mean_per_id_m": 98.23,
+    "median_per_id_m": 114.14,
+    "max_m": 213.95,
+    "estimated_per_player_m": 165.2
+  },
+  "kinematics": {
+    "mean_speed_ms": 6.59,
+    "median_speed_ms": 6.55,
+    "max_speed_ms": 12.0,
+    "pct_impossible_speed": 0.0
+  },
+  "smoothness": {
+    "mean_accel_variance": 1.747,
+    "raw_distance_m": 3634.3,
+    "filtered_distance_m": 3634.3,
+    "raw_filtered_ratio": 1.0,
+    "noise_pct": 0.0
+  },
+  "computational_cost": {
+    "seed": 42,
+    "total_time_s": 191.02,
+    "total_frames": 1233,
+    "fps_processing": 6.45,
+    "avg_frame_ms": 153.73,
+    "peak_ram_mb": 117.1,
+    "peak_vram_mb": 317.5,
+    "video_fps": 30.0
+  },
+  "merge_info": {
+    "n_teams_detected": 3,
+    "ids_before_merge": 66,
+    "ids_after_pass1": 37,
+    "ids_after_merge": 37,
+    "ids_reduced": 29,
+    "merge_max_gap_frames": 450,
+    "merge_max_dist_px": 300.0
+  }
+}
