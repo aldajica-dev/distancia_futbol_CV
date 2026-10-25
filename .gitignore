@@ -1,9 +1,12 @@
 __pycache__/
-*.mp4
-*.avi
+*.pyc
 *.pt
 
 data/raw/*
-data/interim/*
 !data/raw/.gitkeep
+!data/raw/video.mp4
+
+data/interim/*
 !data/interim/.gitkeep
+
+runs/

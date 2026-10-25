@@ -1,8 +1,16 @@
-ultralytics
+# Core
+ultralytics>=8.0.0
 opencv-python
 numpy
+scikit-learn
+
+# Notebooks & reporting
 jupyter
 matplotlib
 pandas
 psutil
 pyyaml
+
+# GPU: install PyTorch with CUDA before running gpu_tracker.py
+# https://pytorch.org/get-started/locally/
+# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
