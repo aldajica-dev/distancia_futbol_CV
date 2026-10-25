@@ -56,9 +56,9 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 ---
 
 ## Uso
-
+el video a ser analizado debe estar en data/raw/ y llamarse video.mp4
 ### Línea Base
-
+Para correr la linea base:
 ```bash
 # Requiere: data/raw/video.mp4
 python src/models/baseline_tracker.py
@@ -70,8 +70,8 @@ Salidas en `data/processed/`:
 - `baseline_frame_data.csv` — datos por frame
 - `baseline_timing.json` — métricas de rendimiento
 
-### Experimentos 1–5 (CPU o GPU)
-
+### FASE 2- Experimentos 1–4 
+Para correr la fase 2, la cual consiste en ajuste de hiperparametros con respecto a la linea base:
 ```bash
 python src/models/advanced_tracker.py           # todos
 python src/models/advanced_tracker.py --only 3  # solo Exp 3
@@ -114,7 +114,7 @@ Salidas en `data/processed/`:
 
 ## Notebooks de Colab
 
-Los experimentos 6 y 7 fueron ejecutados en Google Colab (GPU T4) por sus requerimientos de VRAM:
+Los experimentos 6 y 7 fueron ejecutados en Google Colab por sus requerimientos de VRAM:
 
 - `notebooks/04_exp6_exp7_colab.ipynb` — versión completa con resultados
 - `notebooks/04_colab_runner.ipynb` — versión simplificada de referencia
