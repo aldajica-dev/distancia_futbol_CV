@@ -43,352 +43,339 @@
     }
   },
   "exp1": {
-    "phase": "Exp 1: BoT-SORT Tuneado + ReID",
-    "config": {
-      "exp_name": "Exp 1: BoT-SORT Tuneado + ReID",
-      "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
-      "model_path": "yolov8s.pt",
-      "conf_thresh": 0.25,
-      "imgsz": 1280,
-      "smooth_window": 1,
-      "apply_kinematic_filter": false,
-      "scale_factor": 0.065,
-      "use_perspective_scale": false,
-      "field_polygon": [
-        [
-          60,
-          145
-        ],
-        [
-          1300,
-          145
-        ],
-        [
-          1364,
-          600
-        ],
-        [
-          1364,
-          764
-        ],
-        [
-          0,
-          764
-        ],
-        [
-          0,
-          600
-        ]
-      ],
-      "save_video": false
-    },
+    "phase": "Exp 1: ByteTrack Tuneado",
     "tracking": {
-      "n_unique_ids": 44,
+      "n_unique_ids": 110,
       "expected_players": 22,
-      "fragmentation_ratio": 2.0,
-      "id_switches_estimated": 22,
-      "n_ghost_tracks_by_dist": 0,
-      "pct_ghost_tracks_by_dist": 0.0,
-      "n_ghost_tracks_by_frames": 0,
-      "avg_track_length_frames": 181.9,
-      "median_track_length_frames": 122.0
+      "fragmentation_ratio": 5.0,
+      "id_switches_estimated": 88,
+      "n_ghost_tracks_by_dist": 2,
+      "pct_ghost_tracks_by_dist": 1.8,
+      "n_ghost_tracks_by_frames": 4,
+      "avg_track_length_frames": 159.1,
+      "median_track_length_frames": 104.0
     },
     "distances": {
-      "total_m": 622.5,
-      "mean_per_id_m": 14.15,
-      "median_per_id_m": 7.05,
-      "max_m": 99.88,
-      "estimated_per_player_m": 28.3
+      "total_m": 1342.6,
+      "mean_per_id_m": 12.21,
+      "median_per_id_m": 6.2,
+      "max_m": 127.45,
+      "estimated_per_player_m": 61.0
     },
     "kinematics": {
-      "mean_speed_ms": 2.08,
-      "median_speed_ms": 1.6,
-      "max_speed_ms": 15.74,
-      "pct_impossible_speed": 0.1
+      "mean_speed_ms": 2.14,
+      "median_speed_ms": 1.59,
+      "max_speed_ms": 20.07,
+      "pct_impossible_speed": 0.2
     },
     "smoothness": {
-      "mean_accel_variance": 1.7571,
-      "raw_distance_m": 622.5,
-      "filtered_distance_m": 618.1,
+      "mean_accel_variance": 2.5508,
+      "raw_distance_m": 1342.6,
+      "filtered_distance_m": 1335.1,
       "raw_filtered_ratio": 1.01,
-      "noise_pct": 0.7
+      "noise_pct": 0.6
     },
     "computational_cost": {
       "seed": 42,
-      "total_time_s": 1244.11,
+      "total_time_s": 88.69,
       "total_frames": 1233,
-      "fps_processing": 0.99,
-      "avg_frame_ms": 1002.28,
-      "peak_ram_mb": 85.1,
-      "peak_vram_mb": 0.0,
+      "fps_processing": 13.9,
+      "avg_frame_ms": 70.95,
+      "peak_ram_mb": 88.7,
+      "peak_vram_mb": 216.8,
       "video_fps": 30.0
     }
   },
   "exp2": {
     "phase": "Exp 2: + Filtro Anti-Jitter",
-    "config": {
-      "exp_name": "Exp 2: + Filtro Anti-Jitter",
-      "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
-      "model_path": "yolov8s.pt",
-      "conf_thresh": 0.25,
-      "imgsz": 1280,
-      "smooth_window": 9,
-      "apply_kinematic_filter": true,
-      "deadband_ms": 0.4,
-      "max_speed_ms": 12.0,
-      "max_gap_frames": 9,
-      "scale_factor": 0.065,
-      "use_perspective_scale": false,
-      "field_polygon": [
-        [
-          60,
-          145
-        ],
-        [
-          1300,
-          145
-        ],
-        [
-          1364,
-          600
-        ],
-        [
-          1364,
-          764
-        ],
-        [
-          0,
-          764
-        ],
-        [
-          0,
-          600
-        ]
-      ],
-      "save_video": false
-    },
     "tracking": {
-      "n_unique_ids": 44,
+      "n_unique_ids": 110,
       "expected_players": 22,
-      "fragmentation_ratio": 2.0,
-      "id_switches_estimated": 22,
-      "n_ghost_tracks_by_dist": 0,
-      "pct_ghost_tracks_by_dist": 0.0,
-      "n_ghost_tracks_by_frames": 0,
-      "avg_track_length_frames": 181.9,
-      "median_track_length_frames": 122.0
+      "fragmentation_ratio": 5.0,
+      "id_switches_estimated": 88,
+      "n_ghost_tracks_by_dist": 2,
+      "pct_ghost_tracks_by_dist": 1.8,
+      "n_ghost_tracks_by_frames": 4,
+      "avg_track_length_frames": 159.1,
+      "median_track_length_frames": 104.0
     },
     "distances": {
-      "total_m": 1194.3,
-      "mean_per_id_m": 27.14,
-      "median_per_id_m": 20.22,
-      "max_m": 114.77,
-      "estimated_per_player_m": 54.3
+      "total_m": 2568.8,
+      "mean_per_id_m": 23.35,
+      "median_per_id_m": 13.55,
+      "max_m": 166.81,
+      "estimated_per_player_m": 116.8
     },
     "kinematics": {
-      "mean_speed_ms": 5.98,
-      "median_speed_ms": 5.78,
+      "mean_speed_ms": 5.73,
+      "median_speed_ms": 5.47,
       "max_speed_ms": 12.0,
       "pct_impossible_speed": 0.0
     },
     "smoothness": {
-      "mean_accel_variance": 2.3743,
-      "raw_distance_m": 1194.3,
-      "filtered_distance_m": 1194.3,
+      "mean_accel_variance": 2.4377,
+      "raw_distance_m": 2568.8,
+      "filtered_distance_m": 2568.8,
       "raw_filtered_ratio": 1.0,
       "noise_pct": 0.0
     },
     "computational_cost": {
       "seed": 42,
-      "total_time_s": 1096.32,
+      "total_time_s": 70.18,
       "total_frames": 1233,
-      "fps_processing": 1.12,
-      "avg_frame_ms": 884.62,
-      "peak_ram_mb": 17.3,
-      "peak_vram_mb": 0.0,
+      "fps_processing": 17.57,
+      "avg_frame_ms": 55.84,
+      "peak_ram_mb": 21.9,
+      "peak_vram_mb": 203.1,
       "video_fps": 30.0
     }
   },
   "exp3": {
     "phase": "Exp 3: + Scale Factor Calibrado",
-    "config": {
-      "exp_name": "Exp 3: + Scale Factor Calibrado",
-      "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
-      "model_path": "yolov8s.pt",
-      "conf_thresh": 0.25,
-      "imgsz": 1280,
-      "smooth_window": 9,
-      "apply_kinematic_filter": true,
-      "deadband_ms": 0.4,
-      "max_speed_ms": 12.0,
-      "max_gap_frames": 9,
-      "scale_factor": 0.062109228362878,
-      "use_perspective_scale": true,
-      "field_polygon": [
-        [
-          60,
-          145
-        ],
-        [
-          1300,
-          145
-        ],
-        [
-          1364,
-          600
-        ],
-        [
-          1364,
-          764
-        ],
-        [
-          0,
-          764
-        ],
-        [
-          0,
-          600
-        ]
-      ],
-      "save_video": false
-    },
     "tracking": {
-      "n_unique_ids": 44,
+      "n_unique_ids": 110,
       "expected_players": 22,
-      "fragmentation_ratio": 2.0,
-      "id_switches_estimated": 22,
-      "n_ghost_tracks_by_dist": 0,
-      "pct_ghost_tracks_by_dist": 0.0,
-      "n_ghost_tracks_by_frames": 0,
-      "avg_track_length_frames": 181.9,
-      "median_track_length_frames": 122.0
+      "fragmentation_ratio": 5.0,
+      "id_switches_estimated": 88,
+      "n_ghost_tracks_by_dist": 2,
+      "pct_ghost_tracks_by_dist": 1.8,
+      "n_ghost_tracks_by_frames": 4,
+      "avg_track_length_frames": 159.1,
+      "median_track_length_frames": 104.0
     },
     "distances": {
-      "total_m": 1099.9,
-      "mean_per_id_m": 25.0,
-      "median_per_id_m": 16.28,
-      "max_m": 102.53,
-      "estimated_per_player_m": 50.0
+      "total_m": 2405.9,
+      "mean_per_id_m": 21.87,
+      "median_per_id_m": 13.32,
+      "max_m": 151.98,
+      "estimated_per_player_m": 109.4
     },
     "kinematics": {
-      "mean_speed_ms": 6.26,
-      "median_speed_ms": 6.11,
-      "max_speed_ms": 11.99,
+      "mean_speed_ms": 6.03,
+      "median_speed_ms": 5.86,
+      "max_speed_ms": 12.0,
       "pct_impossible_speed": 0.0
     },
     "smoothness": {
-      "mean_accel_variance": 2.9641,
-      "raw_distance_m": 1099.9,
-      "filtered_distance_m": 1099.9,
+      "mean_accel_variance": 3.0609,
+      "raw_distance_m": 2405.9,
+      "filtered_distance_m": 2405.9,
       "raw_filtered_ratio": 1.0,
       "noise_pct": 0.0
     },
     "computational_cost": {
       "seed": 42,
-      "total_time_s": 1110.37,
+      "total_time_s": 69.35,
       "total_frames": 1233,
-      "fps_processing": 1.11,
-      "avg_frame_ms": 895.93,
-      "peak_ram_mb": 17.0,
-      "peak_vram_mb": 0.0,
+      "fps_processing": 17.78,
+      "avg_frame_ms": 55.22,
+      "peak_ram_mb": 21.6,
+      "peak_vram_mb": 246.4,
       "video_fps": 30.0
     }
   },
   "exp4": {
     "phase": "Exp 4: + Color Clustering + Track Merge",
-    "config": {
-      "exp_name": "Exp 4: + Color Clustering + Track Merge",
-      "tracker_yaml": "C:\\Users\\DAVID JIMENEZ\\Documents\\MAESTRIA SABANA\\TECNICAS AVANZADAS MODELADO IA\\trabajo_final_CV\\distancia_futbol_CV\\models\\fine_tuned\\botsort_tuned.yaml",
-      "model_path": "yolov8s.pt",
-      "conf_thresh": 0.25,
-      "imgsz": 1280,
-      "smooth_window": 9,
-      "apply_kinematic_filter": true,
-      "deadband_ms": 1.0,
-      "max_speed_ms": 12.0,
-      "max_gap_frames": 9,
-      "scale_factor": 0.062109228362878,
-      "use_perspective_scale": true,
-      "field_polygon": [
-        [
-          60,
-          145
-        ],
-        [
-          1300,
-          145
-        ],
-        [
-          1364,
-          600
-        ],
-        [
-          1364,
-          764
-        ],
-        [
-          0,
-          764
-        ],
-        [
-          0,
-          600
-        ]
-      ],
-      "apply_color_clustering": true,
-      "apply_track_merge": true,
-      "merge_max_gap_frames": 112,
-      "merge_max_dist_px": 150.0,
-      "save_video": true
-    },
     "tracking": {
-      "n_unique_ids": 32,
+      "n_unique_ids": 34,
       "expected_players": 22,
       "fragmentation_ratio": 1.5,
-      "id_switches_estimated": 10,
-      "n_ghost_tracks_by_dist": 0,
-      "pct_ghost_tracks_by_dist": 0.0,
-      "n_ghost_tracks_by_frames": 0,
-      "avg_track_length_frames": 250.1,
-      "median_track_length_frames": 168.0
+      "id_switches_estimated": 12,
+      "n_ghost_tracks_by_dist": 1,
+      "pct_ghost_tracks_by_dist": 2.9,
+      "n_ghost_tracks_by_frames": 1,
+      "avg_track_length_frames": 514.9,
+      "median_track_length_frames": 552.0
     },
     "distances": {
-      "total_m": 1096.0,
-      "mean_per_id_m": 34.25,
-      "median_per_id_m": 23.39,
-      "max_m": 143.32,
-      "estimated_per_player_m": 49.8
+      "total_m": 2394.6,
+      "mean_per_id_m": 70.43,
+      "median_per_id_m": 67.28,
+      "max_m": 151.93,
+      "estimated_per_player_m": 108.8
     },
     "kinematics": {
-      "mean_speed_ms": 6.41,
-      "median_speed_ms": 6.23,
-      "max_speed_ms": 11.99,
+      "mean_speed_ms": 6.25,
+      "median_speed_ms": 6.06,
+      "max_speed_ms": 12.0,
       "pct_impossible_speed": 0.0
     },
     "smoothness": {
-      "mean_accel_variance": 3.1599,
-      "raw_distance_m": 1096.0,
-      "filtered_distance_m": 1096.0,
+      "mean_accel_variance": 2.1323,
+      "raw_distance_m": 2394.6,
+      "filtered_distance_m": 2394.6,
       "raw_filtered_ratio": 1.0,
       "noise_pct": 0.0
     },
     "computational_cost": {
       "seed": 42,
-      "total_time_s": 1119.19,
+      "total_time_s": 87.07,
       "total_frames": 1233,
-      "fps_processing": 1.1,
-      "avg_frame_ms": 903.06,
-      "peak_ram_mb": 17.8,
-      "peak_vram_mb": 0.0,
+      "fps_processing": 14.16,
+      "avg_frame_ms": 69.6,
+      "peak_ram_mb": 23.2,
+      "peak_vram_mb": 289.3,
       "video_fps": 30.0
     },
     "merge_info": {
       "n_teams_detected": 3,
-      "ids_before_merge": 44,
-      "ids_after_merge": 32,
-      "ids_reduced": 12,
-      "merge_max_gap_frames": 112,
-      "merge_max_dist_px": 150.0
+      "ids_before_merge": 110,
+      "ids_after_pass1": 34,
+      "ids_after_merge": 34,
+      "ids_reduced": 76
+    }
+  },
+  "exp5": {
+    "phase": "Exp 5: OC-SORT + YOLO11s",
+    "tracking": {
+      "n_unique_ids": 38,
+      "expected_players": 22,
+      "fragmentation_ratio": 1.7,
+      "id_switches_estimated": 16,
+      "n_ghost_tracks_by_dist": 0,
+      "pct_ghost_tracks_by_dist": 0.0,
+      "n_ghost_tracks_by_frames": 0,
+      "avg_track_length_frames": 735.1,
+      "median_track_length_frames": 940.0
+    },
+    "distances": {
+      "total_m": 3574.3,
+      "mean_per_id_m": 94.06,
+      "median_per_id_m": 105.54,
+      "max_m": 209.38,
+      "estimated_per_player_m": 162.5
+    },
+    "kinematics": {
+      "mean_speed_ms": 6.6,
+      "median_speed_ms": 6.5,
+      "max_speed_ms": 12.0,
+      "pct_impossible_speed": 0.0
+    },
+    "smoothness": {
+      "mean_accel_variance": 1.7003,
+      "raw_distance_m": 3574.3,
+      "filtered_distance_m": 3574.3,
+      "raw_filtered_ratio": 1.0,
+      "noise_pct": 0.0
+    },
+    "computational_cost": {
+      "seed": 42,
+      "total_time_s": 136.7,
+      "total_frames": 1233,
+      "fps_processing": 9.02,
+      "avg_frame_ms": 109.8,
+      "peak_ram_mb": 92.6,
+      "peak_vram_mb": 262.5,
+      "video_fps": 30.0
+    },
+    "merge_info": {
+      "n_teams_detected": 3,
+      "ids_before_merge": 69,
+      "ids_after_pass1": 38,
+      "ids_after_merge": 38,
+      "ids_reduced": 31
+    }
+  },
+  "exp6": {
+    "phase": "Exp 6: BoT-SORT + YOLO11s + ReID (OSNet)",
+    "tracking": {
+      "n_unique_ids": 37,
+      "expected_players": 22,
+      "fragmentation_ratio": 1.7,
+      "id_switches_estimated": 15,
+      "n_ghost_tracks_by_dist": 0,
+      "pct_ghost_tracks_by_dist": 0.0,
+      "n_ghost_tracks_by_frames": 0,
+      "avg_track_length_frames": 779.4,
+      "median_track_length_frames": 1030.0
+    },
+    "distances": {
+      "total_m": 3634.3,
+      "mean_per_id_m": 98.23,
+      "median_per_id_m": 114.14,
+      "max_m": 213.95,
+      "estimated_per_player_m": 165.2
+    },
+    "kinematics": {
+      "mean_speed_ms": 6.59,
+      "median_speed_ms": 6.55,
+      "max_speed_ms": 12.0,
+      "pct_impossible_speed": 0.0
+    },
+    "smoothness": {
+      "mean_accel_variance": 1.747,
+      "raw_distance_m": 3634.3,
+      "filtered_distance_m": 3634.3,
+      "raw_filtered_ratio": 1.0,
+      "noise_pct": 0.0
+    },
+    "computational_cost": {
+      "seed": 42,
+      "total_time_s": 191.02,
+      "total_frames": 1233,
+      "fps_processing": 6.45,
+      "avg_frame_ms": 153.73,
+      "peak_ram_mb": 117.1,
+      "peak_vram_mb": 317.5,
+      "video_fps": 30.0
+    },
+    "merge_info": {
+      "n_teams_detected": 3,
+      "ids_before_merge": 66,
+      "ids_after_pass1": 37,
+      "ids_after_merge": 37,
+      "ids_reduced": 29
+    }
+  },
+  "exp7": {
+    "phase": "Exp 7: YOLO fine-tuned + BoT-SORT + ReID",
+    "tracking": {
+      "n_unique_ids": 29,
+      "expected_players": 22,
+      "fragmentation_ratio": 1.3,
+      "id_switches_estimated": 7,
+      "n_ghost_tracks_by_dist": 0,
+      "pct_ghost_tracks_by_dist": 0.0,
+      "n_ghost_tracks_by_frames": 1,
+      "avg_track_length_frames": 605.7,
+      "median_track_length_frames": 691.0
+    },
+    "distances": {
+      "total_m": 2227.2,
+      "mean_per_id_m": 76.8,
+      "median_per_id_m": 84.49,
+      "max_m": 156.5,
+      "estimated_per_player_m": 101.2
+    },
+    "kinematics": {
+      "mean_speed_ms": 6.84,
+      "median_speed_ms": 6.86,
+      "max_speed_ms": 12.0,
+      "pct_impossible_speed": 0.0
+    },
+    "smoothness": {
+      "mean_accel_variance": 1.8681,
+      "raw_distance_m": 2227.2,
+      "filtered_distance_m": 2227.2,
+      "raw_filtered_ratio": 1.0,
+      "noise_pct": 0.0
+    },
+    "computational_cost": {
+      "seed": 42,
+      "total_time_s": 117.4,
+      "total_frames": 1233,
+      "fps_processing": 10.5,
+      "avg_frame_ms": 94.02,
+      "peak_ram_mb": 28.5,
+      "peak_vram_mb": 552.6,
+      "video_fps": 30.0
+    },
+    "merge_info": {
+      "n_teams_detected": 3,
+      "ids_before_merge": 58,
+      "ids_after_pass1": 29,
+      "ids_after_merge": 29,
+      "ids_reduced": 29
     }
   }
 }

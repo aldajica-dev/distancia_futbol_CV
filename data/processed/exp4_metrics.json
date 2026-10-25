@@ -53,44 +53,44 @@
     "n_ghost_tracks_by_dist": 0,
     "pct_ghost_tracks_by_dist": 0.0,
     "n_ghost_tracks_by_frames": 0,
-    "avg_track_length_frames": 250.1,
+    "avg_track_length_frames": 252.2,
     "median_track_length_frames": 168.0
   },
   "distances": {
-    "total_m": 1096.0,
-    "mean_per_id_m": 34.25,
+    "total_m": 1112.3,
+    "mean_per_id_m": 34.76,
     "median_per_id_m": 23.39,
-    "max_m": 143.32,
-    "estimated_per_player_m": 49.8
+    "max_m": 144.33,
+    "estimated_per_player_m": 50.6
   },
   "kinematics": {
-    "mean_speed_ms": 6.41,
-    "median_speed_ms": 6.23,
-    "max_speed_ms": 11.99,
+    "mean_speed_ms": 6.45,
+    "median_speed_ms": 6.29,
+    "max_speed_ms": 12.0,
     "pct_impossible_speed": 0.0
   },
   "smoothness": {
-    "mean_accel_variance": 3.1599,
-    "raw_distance_m": 1096.0,
-    "filtered_distance_m": 1096.0,
+    "mean_accel_variance": 3.1785,
+    "raw_distance_m": 1112.3,
+    "filtered_distance_m": 1112.3,
     "raw_filtered_ratio": 1.0,
     "noise_pct": 0.0
   },
   "computational_cost": {
     "seed": 42,
-    "total_time_s": 1119.19,
+    "total_time_s": 1228.61,
     "total_frames": 1233,
-    "fps_processing": 1.1,
-    "avg_frame_ms": 903.06,
+    "fps_processing": 1.0,
+    "avg_frame_ms": 991.48,
     "peak_ram_mb": 17.8,
     "peak_vram_mb": 0.0,
     "video_fps": 30.0
   },
   "merge_info": {
     "n_teams_detected": 3,
-    "ids_before_merge": 44,
+    "ids_before_merge": 47,
     "ids_after_merge": 32,
-    "ids_reduced": 12,
+    "ids_reduced": 15,
     "merge_max_gap_frames": 112,
     "merge_max_dist_px": 150.0
   }

@@ -122,9 +122,29 @@ Trabajo final de la materia "Técnicas Avanzadas de Modelado IA" en la Maestría
 
 **Documentación:** `reports/bitacora_fase2.md` (bitácora viva), `reports/reporte_fase2_ajustes.docx` (reporte final)
 
-### Fase 2 — Etapa 2C: Evaluación y Reporte (pendiente)
-- Notebook de comparación con gráficas lado a lado.
-- Visualización avanzada (annotator.py).
+### Fase 2 — Etapa 2C: Experimentos 6 y 7 en Google Colab (completada)
+**Notebook:** `notebooks/04_exp6_exp7_colab.ipynb`
+**Resultados en:** `data/processed/ablation_results.json` (todos los experimentos)
+
+**Exp 6 (BoT-SORT + YOLO11s + ReID OSNet):**
+- 37 IDs, 1.7× fragmentación, 15 switches, track mediana **1030 fr** (mejor cobertura continua)
+- 0 ghost tracks, 165.2 m/jugadora en 41 seg, 6.45 FPS
+- Visualmente: identidades muy consistentes, jugadoras mantenidas tras oclusiones prolongadas
+
+**Exp 7 (YOLO fine-tuned con pseudo-etiquetas + BoT-SORT + ReID):**
+- **29 IDs, 1.3× fragmentación** (menor del estudio), **7 ID switches** (menor del estudio)
+- 0 ghost tracks, 101.2 m/jugadora, 10.5 FPS
+- Trade-off: detector conservador → menos cobertura pero mayor pureza de identidad
+- Fine-tuning: YOLO11s entrenado con pseudo-etiquetas conf>0.5, ~827 frames, split 80/20
+
+**Informe técnico final:** `reports/informe_final.docx` (12 secciones, Baseline + Exp1-7)
+- Tabla consolidada con 8 columnas y semáforo de calidad
+- Comparación Baseline → Exp 6/Exp 7 con análisis de trade-off
+- Sección 7: cuantificación del error residual GMC
+
+### Fase 2 — Etapa 2C: Evaluación y Reporte (completada)
+- Informe técnico final generado: `reports/informe_final.docx`
+- Ablation results consolidados: `data/processed/ablation_results.json`
 
 ## Comandos útiles
 
