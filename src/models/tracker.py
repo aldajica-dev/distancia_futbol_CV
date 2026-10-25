@@ -180,11 +180,15 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
     t_start = time.time()
 
     model_path = config.get("model_path", MODEL_PATH)
+    video_input = config.get("video_path", VIDEO_INPUT)
+    output_dir  = config.get("output_dir",  PROCESSED_DIR)
+    os.makedirs(output_dir, exist_ok=True)
+
     device = get_device()
     model = YOLO(model_path)
-    cap = cv2.VideoCapture(VIDEO_INPUT)
+    cap = cv2.VideoCapture(video_input)
     if not cap.isOpened():
-        print(f"ERROR: No se pudo abrir el video en: {VIDEO_INPUT}")
+        print(f"ERROR: No se pudo abrir el video en: {video_input}")
         return {}
 
     w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -195,7 +199,7 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
     save_video = config.get("save_video", True) and save_artifacts_prefix is not None
     out = None
     if save_video:
-        video_path = os.path.join(PROCESSED_DIR, f"{save_artifacts_prefix}_tactical.mp4")
+        video_path = os.path.join(output_dir, f"{save_artifacts_prefix}_tactical.mp4")
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         out = cv2.VideoWriter(video_path, fourcc, fps, (w, h))
 
@@ -349,25 +353,25 @@ def run_controlled_experiment(config, save_artifacts_prefix=None):
 
     # Guardar artefactos
     if save_artifacts_prefix:
-        csv_path = os.path.join(PROCESSED_DIR, f"{save_artifacts_prefix}_distances.csv")
+        csv_path = os.path.join(output_dir, f"{save_artifacts_prefix}_distances.csv")
         with open(csv_path, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["Track_ID", "Distancia_Metros"])
             for tid in sorted(total_distances):
                 writer.writerow([tid, f"{total_distances[tid]:.2f}"])
 
-        frame_csv_path = os.path.join(PROCESSED_DIR, f"{save_artifacts_prefix}_frame_data.csv")
+        frame_csv_path = os.path.join(output_dir, f"{save_artifacts_prefix}_frame_data.csv")
         with open(frame_csv_path, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["frame", "track_id", "foot_u", "foot_v", "dist_meters", "frame_diff"])
             for row in frame_data:
                 writer.writerow([row[0], row[1], f"{row[2]:.2f}", f"{row[3]:.2f}", f"{row[4]:.4f}", row[5]])
 
-        metrics_path = os.path.join(PROCESSED_DIR, f"{save_artifacts_prefix}_metrics.json")
+        metrics_path = os.path.join(output_dir, f"{save_artifacts_prefix}_metrics.json")
         with open(metrics_path, "w") as f:
             json.dump(metrics, f, indent=2)
 
-        print(f"\nArtefactos guardados con prefijo: {save_artifacts_prefix}")
+        print(f"\nArtefactos guardados con prefijo: {save_artifacts_prefix} → {output_dir}")
 
     print(f"[{exp_name}] Tracks: {len(total_distances)} | Tiempo: {total_time:.1f}s ({frame_num / total_time:.1f} FPS)")
     return metrics

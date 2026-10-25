@@ -97,6 +97,47 @@ def create_ocsort_yaml(output_path, track_high_thresh=0.25, track_low_thresh=0.1
     return os.path.abspath(output_path)
 
 
+def create_deepocsort_yaml(output_path, track_high_thresh=0.25, track_low_thresh=0.10,
+                           new_track_thresh=0.60, track_buffer=600, match_thresh=0.80,
+                           delta_t=5, inertia=0.3, use_byte=True,
+                           reid_model="osnet_x0_25_msmt17.pt",
+                           proximity_thresh=0.5, appearance_thresh=0.25):
+    """Genera YAML de DeepOC-SORT para Ultralytics.
+
+    DeepOC-SORT extiende OC-SORT con características de apariencia (ReID):
+    además de la velocidad observada, usa descriptores visuales del detector
+    para re-identificar jugadoras que reaparecen después de oclusiones largas.
+    El modelo ReID se descarga automáticamente la primera vez.
+
+    Args:
+        reid_model: Pesos ReID — 'osnet_x0_25_msmt17.pt' (ligero) o
+                    'osnet_x1_0_msmt17.pt' (más preciso, más lento).
+        proximity_thresh: Distancia IoU mínima para activar matching por apariencia.
+        appearance_thresh: Umbral de distancia de apariencia (coseno) para aceptar match.
+    """
+    config = {
+        "tracker_type": "deepocsort",
+        "track_high_thresh": track_high_thresh,
+        "track_low_thresh": track_low_thresh,
+        "new_track_thresh": new_track_thresh,
+        "track_buffer": track_buffer,
+        "match_thresh": match_thresh,
+        "fuse_score": True,
+        "iou_type": "giou",
+        "asso_func": "giou",
+        "delta_t": delta_t,
+        "inertia": inertia,
+        "use_byte": use_byte,
+        "model": reid_model,
+        "proximity_thresh": proximity_thresh,
+        "appearance_thresh": appearance_thresh,
+    }
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w") as f:
+        yaml.dump(config, f, default_flow_style=False, sort_keys=False)
+    return os.path.abspath(output_path)
+
+
 def create_bytetrack_yaml(output_path, track_high_thresh=0.25, track_low_thresh=0.10,
                           new_track_thresh=0.60, track_buffer=450, match_thresh=0.80):
     """Genera YAML de ByteTrack para Ultralytics.
