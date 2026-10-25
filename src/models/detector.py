@@ -84,6 +84,7 @@ def create_ocsort_yaml(output_path, track_high_thresh=0.25, track_low_thresh=0.1
         "new_track_thresh": new_track_thresh,
         "track_buffer": track_buffer,
         "match_thresh": match_thresh,
+        "fuse_score": True,   # requerido por Ultralytics OC-SORT
         "iou_type": "giou",
         "asso_func": "giou",
         "delta_t": delta_t,
